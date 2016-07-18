@@ -1,0 +1,13 @@
+{
+  "name": "Job",
+  "decription": "Job publication manager.",
+  "version": "1.0",
+  "type": "module",
+  "dependencies": {
+    "system": {
+      "type": "SAE",
+      "version": "4.1.0"
+    }
+  }
+}
+
