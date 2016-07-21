@@ -2,32 +2,32 @@
 
 class Job_ApplicationController extends Application_Controller_Default {
 
-    public function formAction() {
+    /**
+     * Simple edit post, validator
+     */
+    public function editpostAction() {
+        $values = $this->getRequest()->getPost();
 
-        $id = $this->getRequest()->getParam("id");
-
-        try {
-
-            $page = new Cms_Model_Application_Page();
-            $page->find($id);
-            if(!$page->getId()) {
-                $page->setId("new");
-            }
-
-            $this->getLayout()->setBaseRender('form', 'job/application/edit.phtml', 'admin_view_default')
-                ->setCurrentPage($page)
-                ->setOptionValue($this->getCurrentOptionValue())
-                ->setCurrentFeature("places")
+        $form = new Job_Form_Company();
+        if($form->isValid($values)) {
+            /** Do whatever you need when form is valid */
+            $company = new Job_Model_Company();
+            $company->addData("job_id", $this->getCurrentOptionValue()->getId());
+            $company
+                ->addData($values)
+                ->save()
             ;
 
             $html = array(
-                'form' => $this->getLayout()->render(),
-                'success' => 1
+                "success" => 1,
+                "message" => __("Success."),
             );
-
-        } catch (Exception $e) {
+        } else {
+            /** Do whatever you need when form is not valid */
             $html = array(
-                'message' => $e->getMessage()
+                "error" => 1,
+                "message" => $form->getTextErrors(),
+                "errors" => array_filter($form->getErrors())
             );
         }
 

@@ -1,0 +1,88 @@
+<?php
+    $application = $this->getApplication();
+    $option_value = $this->getOptionValue();
+    $company = new Job_Model_Company();
+    $companies = $company->findAll(array(
+        "value_id" => $option_value->getId(),
+    ));
+
+    $form = new Job_Form_Company();
+    $form->setValueId($option_value->getId());
+
+    $delete_form = new Job_Form_Company_Delete();
+?>
+
+
+<div id="list" class="job">
+
+    <div class="feature-block-add">
+        <h3 class="title-editor no-border-radius title-feature-indent">
+            <?php echo __('Add'); ?>
+            <button type="button" class="feature-toggle-add toggle_design color-blue pull-right bt-header-right btn">
+                <i class="fa fa-plus"></i>
+            </button>
+        </h3>
+    </div>
+
+    <div class="feature-block-create">
+        <h3 class="title-editor no-border-radius title-feature-indent">
+            <?php echo __('Create a new Company'); ?>
+        </h3>
+        <div class="container-fluid">
+            <?php echo $form; ?>
+        </div>
+    </div>
+
+    <?php echo $this->createPartialHtml('no_item', 'core_view_default', 'application/customization/features/edit/no_item.phtml'); ?>
+
+    <?php if($companies->count() > 0): ?>
+    <div class="feature-block-list">
+        <div class="margin-top">
+            <h3 class="title-editor no-border-radius title-feature-indent">
+                <?php echo __('Manage'); ?>
+                <button type="button" id="toggle_existing_items" class="toggle_design color-blue pull-right bt-header-right btn">
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+            </h3>
+            <div id="feature-manage-items" class="container-fluid first-row-feature">
+                <table class="table content-white-bkg">
+                    <thead>
+                    <tr class="border-blue">
+                        <th style="width:26%;"><?php echo __("Name"); ?></th>
+                        <th style="width:34%;"><?php echo __("Description"); ?></th>
+                        <th><?php echo __("E-Mail"); ?></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($companies as $company) : ?>
+                        <tr id="company_manage_element_<?php echo $company->getId(); ?>" class="company-manage-element">
+                            <td><?php echo $company->getName(); ?></td>
+                            <td><?php echo cut($company->getDescription(), 30); ?></td>
+                            <td><?php echo $company->getEmail(); ?></td>
+                            <td>
+                                <i class="fa fa-search company-manage-edit" data-companyid="<?php echo $company->getId(); ?>"></i>
+                            </td>
+                            <td>
+                                <?php
+                                    $delete_form->setAttrib("data-rowid", "company_manage_element_".$company->getId());
+                                    $delete_form->getElement("company_id")->setValue($company->getId());
+
+                                    echo $delete_form;
+                                ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <div>
+        <?php echo $this->importBackground($option_value); ?>
+    </div>
+</div>

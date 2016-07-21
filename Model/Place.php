@@ -1,6 +1,12 @@
 <?php
 
-class Job_Model_Job extends Core_Model_Default {
+class Job_Model_Place extends Core_Model_Default {
+
+    public function __construct($params = array()) {
+        parent::__construct($params);
+        $this->_db_table = 'Job_Model_Db_Table_Place';
+        return $this;
+    }
 
     public function getTitle() {
         return $this->title;

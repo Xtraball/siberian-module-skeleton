@@ -1,0 +1,11 @@
+/**
+    If you need custom CSS specific for your module:
+
+    append this line at the end of your edit.phtml
+
+    <link href="/app/local/modules/Job/resources/design/desktop/flat/template/job/application/edit.css" media="screen" rel="stylesheet" type="text/css">
+
+    note: don't forget to edit your paths
+
+    and write custom CSS right there
+*/

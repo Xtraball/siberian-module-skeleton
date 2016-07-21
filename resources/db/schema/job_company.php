@@ -7,6 +7,9 @@ $schemas['job_company'] = array(
         'auto_increment' => true,
         'primary' => true,
     ),
+    'value_id' => array(
+        'type' => 'int(11) unsigned',
+    ),
     'name' => array(
         'type' => 'varchar(255)',
         'charset' => 'utf8',
@@ -17,7 +20,17 @@ $schemas['job_company'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
-    'icon' => array(
+    'location' => array(
+        'type' => 'varchar(512)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'email' => array(
+        'type' => 'varchar(64)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'logo' => array(
         'type' => 'varchar(255)',
         'is_null' => true,
         'charset' => 'utf8',

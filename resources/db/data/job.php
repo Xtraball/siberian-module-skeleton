@@ -5,8 +5,8 @@ $category = "social";
 
 # Icons
 $icons = array(
-    "/app/local/Job/media/library/job1.png",
-    "/app/local/Job/media/library/job2.png",
+    "/app/local/modules/Job/resources/media/library/job1.png",
+    "/app/local/modules/Job/resources/media/library/job2.png",
 );
 
 $result = Siberian_Feature::installIcons($name, $icons);
@@ -38,8 +38,8 @@ Siberian_Feature::installLayouts($option->getId(), $slug, $layout_data);
 
 # Icons Flat
 $icons = array(
-    "/app/local/Job/media/library/job1.png",
-    "/app/local/Job/media/library/job2.png",
+    "/app/local/modules/Job/resources/media/library/job1-flat.png",
+    "/app/local/modules/Job/resources/media/library/job2-flat.png",
 );
 
 Siberian_Feature::installIcons("{$name}-flat", $icons);
