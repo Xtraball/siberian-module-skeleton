@@ -8,6 +8,16 @@ class Job_Model_Place extends Core_Model_Default {
         return $this;
     }
 
+    /**
+     * @param $values
+     * @param $order
+     * @param $params
+     * @return mixed
+     */
+    public function findActive($values, $order, $params) {
+        return $this->getTable()->findActive($values, $order, $params);
+    }
+
     public function getTitle() {
         return $this->title;
     }
@@ -22,6 +32,15 @@ class Job_Model_Place extends Core_Model_Default {
 
     public function setIcon($icon) {
         $this->icon = $icon;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function toggle() {
+        $this->setIsActive(!$this->getIsActive())->save();
+
+        return $this->getIsActive();
     }
 
     public function enable() {

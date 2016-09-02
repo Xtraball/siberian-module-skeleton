@@ -48,6 +48,12 @@ $schemas['job_place'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'banner' => array(
+        'type' => 'varchar(255)',
+        'is_null' => true,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'is_active' => array(
         'type' => 'tinyint(1) unsigned',
         'default' => '0',

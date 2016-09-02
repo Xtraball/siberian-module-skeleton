@@ -8,7 +8,7 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         parent::init();
 
         $this
-            ->setAction(__path("/job/application/editpost"))
+            ->setAction(__path("/job/application/editcompanypost"))
             ->setAttrib("id", "form-company")
             ->setBindJs(true)
             ->addNav("job-company-nav")
@@ -35,8 +35,11 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         $address
             ->setRequired(true)
         ;
+
+        $employees = $this->addSimpleText("employee_count", __("Employee count"));
         
         $logo = $this->addSimpleImage("logo", __("Logo"), __("Import a logo"), array("width" => 500, "height" => 500, "required" => true));
+        $header = $this->addSimpleImage("header", __("Header"), __("Import a header"), array("width" => 1200, "height" => 400, "required" => true));
 
         $value_id = $this->addSimpleHidden("value_id");
         $value_id

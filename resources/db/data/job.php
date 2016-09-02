@@ -28,7 +28,7 @@ $data = array(
     "social_sharing_is_available"   => 1
 );
 
-$option = Siberian_Feature::install($category, $data);
+$option = Siberian_Feature::install($category, $data, array("code"));
 
 # Layouts
 $layout_data = array(1, 2);
@@ -43,3 +43,6 @@ $icons = array(
 );
 
 Siberian_Feature::installIcons("{$name}-flat", $icons);
+
+# Copy assets at install time
+Siberian_Assets::copyAssets("/app/local/modules/Job/resources/var/apps/");

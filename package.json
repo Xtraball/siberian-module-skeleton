@@ -6,8 +6,12 @@
   "dependencies": {
     "system": {
       "type": "SAE",
-      "version": "4.1.0"
+      "version": "4.4.2"
     }
+  },
+  "assets": {
+    "path": "resources/var/apps/modules/job",
+    "folder": "job"
   }
 }
 

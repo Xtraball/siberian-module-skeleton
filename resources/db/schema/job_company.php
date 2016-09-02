@@ -25,12 +25,23 @@ $schemas['job_company'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'employee_count' => array(
+        'type' => 'varchar(128)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'email' => array(
         'type' => 'varchar(64)',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
     'logo' => array(
+        'type' => 'varchar(255)',
+        'is_null' => true,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'header' => array(
         'type' => 'varchar(255)',
         'is_null' => true,
         'charset' => 'utf8',
