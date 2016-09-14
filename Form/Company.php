@@ -17,6 +17,8 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         /** Bind as a create form */
         self::addClass("create", $this);
 
+        $this->addSimpleHidden("company_id");
+
         $name = $this->addSimpleText("name", __("Name"));
         $name
             ->setRequired(true)
@@ -45,5 +47,9 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         $value_id
             ->setRequired(true)
         ;
+    }
+
+    public function setCompanyId($company_id) {
+        $this->getElement("company_id")->setValue($company_id)->setRequired(true);
     }
 }

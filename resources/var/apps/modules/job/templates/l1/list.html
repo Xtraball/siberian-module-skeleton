@@ -8,7 +8,24 @@
         </button>
     </ion-nav-buttons>
 
-    <ion-content class="l1" sb-background-image>
+    <div class="bar bar-subheader">
+        <div class="item item-input-inset job-search">
+            <div class="item-input-wrapper textual">
+                <i class="icon ion-ios-search"></i>
+                <input type="text" placeholder='{{ "Search..." || translate }}' />
+            </div>
+
+            <div class="item-input-wrapper place">
+                <i class="icon ion-ios-location-outline"></i>{{ "Place" || translate }}
+            </div>
+
+            <div class="item-input-wrapper more">
+                <i class="icon ion-ios-plus-outline"></i>
+            </div>
+        </div>
+    </div>
+
+    <ion-content class="l1 has-subheader" sb-background-image>
 
         <div ng-include="template_header"></div>
 
@@ -19,10 +36,15 @@
         <div class="list" ng-show="collection.length">
 
             <div ng-click="showItem(item)" ng-repeat="item in collection">
-                <div class="item item-custom" ng-class="{ 'item-avatar': item.company_logo }">
-                    <img ng-src="{{ item.company_logo }}" ng-if="item.company_logo" />
-                    <h2>{{ item.title }}</h2>
-                    <p ng-if="item.subtitle">{{ item.subtitle }}</p>
+                <div class="item item-custom item-place" ng-class="{ 'item-avatar': item.company_logo && options.show_logo }">
+                    <img ng-src="{{ item.company_logo }}" ng-if="item.company_logo && options.show_logo" />
+                    <h2>{{ item.title }} <span ng-if="item.contract_type">{{ item.contract_type }}</span></h2>
+                    <p class="subtitle" ng-if="item.subtitle">{{ item.subtitle }}</p>
+                    <p class="subtitle-company" ng-if="item.company_name || item.location">
+                        <span ng-if="item.company_name">{{ item.company_name }}</span>
+                        <span ng-if="item.company_name && item.location">, </span>
+                        <span ng-if="item.location">{{ item.location }}</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -42,3 +64,52 @@
 
     </ion-content>
 </ion-view>
+
+<style type="text/css">
+    .job-search {
+        padding: 0px;
+        border: 0px;
+    }
+
+    .job-search i.icon {
+        font-size: 24px;
+    }
+
+    .job-search .textual,
+    .job-search .place,
+    .job-search .more {
+        padding: 0px;
+        border-radius: 0;
+        border: 0px;
+        background-color: transparent;
+    }
+    .job-search .textual {
+        width: 100%;
+    }
+    .job-search .place {
+        float: right;
+        max-width: 100px;
+    }
+    .job-search .place i.icon {
+        font-size: 14px;
+        margin-right: 6px;
+    }
+    .job-search .more {
+        float: right;
+        max-width: 30px;
+    }
+
+    .item-place {
+        padding: 6px;
+    }
+
+    .item-place p.subtitle {
+        font-size: 13px;
+        opacity: 0.7;
+    }
+
+    .item-place p.subtitle-company {
+        font-size: 13px;
+        opacity: 0.5;
+    }
+</style>

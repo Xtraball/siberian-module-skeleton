@@ -17,6 +17,10 @@ foreach($companies as $_company) {
     $company_options[$_company->getId()] = $_company->getName();
 }
 
+$form_company_edit = new Job_Form_Company();
+$form_company_edit->removeNav("job-company-nav");
+$form_company_edit->addNav("job-company-edit-nav", "Save", false);
+
 # Place form
 if(!empty(array_keys($company_options))) {
     $place = new Job_Model_Place();
@@ -26,21 +30,38 @@ if(!empty(array_keys($company_options))) {
 }
 
 $form_place = new Job_Form_Place();
-$form_place->getElement("company_id")->addMultiOptions($company_options);
+if(!empty($company_options)) {
+    $form_place->getElement("company_id")->addMultiOptions($company_options);
+}
 $form_place->setValueId($option_value->getId());
+
+$form_place_edit = new Job_Form_Place();
+$form_place_edit->removeNav("job-place-nav");
+$form_place_edit->addNav("job-place-edit-nav", "Save", false);
 
 
 # Company & Place delete forms
 $delete_form = new Job_Form_Company_Delete();
 $delete_place_form = new Job_Form_Place_Delete();
 
-
+# Options
+$form_options = new Job_Form_Options();
+$form_place->setValueId($option_value->getId());
 
 
 ?>
 
 
 <div id="list" class="job">
+
+    <div class="margin-top">
+        <h3 class="title-editor no-border-radius title-feature-indent">
+            <?php echo __('Configuration'); ?>
+        </h3>
+        <div class="container-fluid">
+            <?php echo $form_options; ?>
+        </div>
+    </div>
 
     <div class="feature-block-add">
         <h3 class="title-editor no-border-radius title-feature-indent">
@@ -98,7 +119,7 @@ $delete_place_form = new Job_Form_Place_Delete();
                             <th style="width:26%;"><?php echo __("Name"); ?></th>
                             <th style="width:34%;"><?php echo __("Description"); ?></th>
                             <th><?php echo __("E-Mail"); ?></th>
-                            <!--th></th-->
+                            <th></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -108,15 +129,31 @@ $delete_place_form = new Job_Form_Place_Delete();
                                 <td><?php echo $company->getName(); ?></td>
                                 <td><?php echo cut($company->getDescription(), 30); ?></td>
                                 <td><?php echo $company->getEmail(); ?></td>
-                                <!--td>
-                                <i class="fa fa-search company-manage-edit" data-companyid="<?php echo $company->getId(); ?>"></i>
-                            </td-->
-                                <td>
+                                <td class="edit-action">
+                                    <i class="fa fa-pencil toggle-edit" data-id="company_<?php echo $company->getId(); ?>"></i>
+                                </td>
+                                <td class="delete-action">
                                     <?php
-                                    $delete_form->setAttrib("data-rowid", "company_manage_element_".$company->getId());
-                                    $delete_form->getElement("company_id")->setValue($company->getId());
+                                        $delete_form->setAttrib("data-rowid", "company_manage_element_".$company->getId());
+                                        $delete_form->getElement("company_id")->setValue($company->getId());
 
-                                    echo $delete_form;
+                                        echo $delete_form;
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr class="edit-form" data-id="company_<?php echo $company->getId(); ?>" style="display: none;">
+                                <td colspan="5">
+                                    <i class="fa fa-times toggle-edit" data-id="company_<?php echo $company->getId(); ?>"></i>
+                                    <?php
+                                        $form_company_edit->reset();
+                                        $form_company_edit->setValueId($option_value->getId());
+                                        $form_company_edit->populate($company->getData());
+                                        $form_company_edit->setCompanyId($company->getId());
+                                        if(!empty($company_options)) {
+                                            $form_place_edit->getElement("company_id")->addMultiOptions($company_options);
+                                        }
+
+                                        echo $form_company_edit;
                                     ?>
                                 </td>
                             </tr>
@@ -145,7 +182,7 @@ $delete_place_form = new Job_Form_Place_Delete();
                             <th style="width:26%;"><?php echo __("Name"); ?></th>
                             <th style="width:34%;"><?php echo __("Company"); ?></th>
                             <th><?php echo __("Description"); ?></th>
-                            <!--th></th-->
+                            <th></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -155,15 +192,28 @@ $delete_place_form = new Job_Form_Place_Delete();
                                 <td><?php echo $place->getName(); ?></td>
                                 <td><?php echo $company_options[$place->getCompanyId()]; ?></td>
                                 <td><?php echo cut($place->getDescription(), 30); ?></td>
-                                <!--td>
-                                    <i class="fa fa-search place-manage-edit" data-placeid="<?php echo $place->getId(); ?>"></i>
-                                </td-->
-                                <td>
+                                <td class="edit-action">
+                                    <i class="fa fa-pencil toggle-edit" data-id="place_<?php echo $place->getId(); ?>"></i>
+                                </td>
+                                <td class="delete-action">
                                     <?php
-                                    $delete_place_form->setAttrib("data-rowid", "place_manage_element_".$place->getId());
-                                    $delete_place_form->getElement("place_id")->setValue($place->getId());
+                                        $delete_place_form->setAttrib("data-rowid", "place_manage_element_".$place->getId());
+                                        $delete_place_form->getElement("place_id")->setValue($place->getId());
 
-                                    echo $delete_place_form;
+                                        echo $delete_place_form;
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr class="edit-form" data-id="place_<?php echo $place->getId(); ?>" style="display: none;">
+                                <td colspan="5">
+                                    <i class="fa fa-times toggle-edit" data-id="place_<?php echo $place->getId(); ?>"></i>
+                                    <?php
+                                        $form_place_edit->reset();
+                                        $form_place_edit->setValueId($option_value->getId());
+                                        $form_place_edit->populate($place->getData());
+                                        $form_place_edit->setPlaceId($place->getId());
+
+                                        echo $form_place_edit;
                                     ?>
                                 </td>
                             </tr>
@@ -180,3 +230,6 @@ $delete_place_form = new Job_Form_Place_Delete();
         <?php echo $this->importBackground($option_value); ?>
     </div>
 </div>
+
+<link href="/app/local/modules/Job/resources/design/desktop/flat/template/job/application/edit.css" media="screen" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/app/local/modules/Job/resources/design/desktop/flat/template/job/application/edit.js"></script>

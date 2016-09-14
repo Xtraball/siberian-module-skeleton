@@ -10,11 +10,14 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         $this
             ->setAction(__path("/job/application/editplacepost"))
             ->setAttrib("id", "form-place")
+            ->setBindJs(true)
             ->addNav("job-place-nav");
         ;
 
         /** Bind as a create form */
         self::addClass("create", $this);
+
+        $this->addSimpleHidden("place_id");
 
         $logo = $this->addSimpleImage("banner", __("Header"), __("Import a header image"), array("width" => 1200, "height" => 400, "required" => true));
 
@@ -50,5 +53,9 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         $value_id
             ->setRequired(true)
         ;
+    }
+
+    public function setPlaceId($place_id) {
+        $this->getElement("place_id")->setValue($place_id)->setRequired(true);
     }
 }

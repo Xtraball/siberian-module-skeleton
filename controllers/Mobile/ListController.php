@@ -28,7 +28,9 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "id" => $place->place_id,
                             "title" => $place->name,
                             "subtitle" => $place->description,
-                            "company_logo" => ($place->logo) ? $this->getRequest()->getBaseUrl()."/images/application".$place->logo : null,
+                            "location" => $place->location,
+                            "company_logo" => ($place->company_logo) ? $this->getRequest()->getBaseUrl()."/images/application".$place->company_logo : null,
+                            "company_name" => $place->company_name,
                         );
                     }
 

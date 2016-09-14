@@ -3,6 +3,13 @@
 class Job_ApplicationController extends Application_Controller_Default {
 
     /**
+     * Edit options
+     */
+    public function editoptionspostAction() {
+        $values = $this->getRequest()->getPost();
+    }
+
+    /**
      * Simple edit post, validator
      */
     public function editcompanypostAction() {

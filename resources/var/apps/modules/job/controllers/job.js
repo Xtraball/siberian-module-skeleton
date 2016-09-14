@@ -22,6 +22,10 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         }
     });
 
+    $scope.options = {
+        show_logo: false
+    };
+
     $scope.can_load_older_places = false;
     $scope.social_sharing_active = false;
     $scope.is_loading = true;

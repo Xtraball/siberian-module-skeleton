@@ -8,7 +8,6 @@ class Job_Bootstrap {
     Siberian_Assets::addJavascripts(array(
         "modules/job/controllers/job.js",
         "modules/job/factories/job.js",
-        "modules/job/services/l17.js",
     ));
   }
 }

@@ -11,3 +11,6 @@
 */
 
 
+$(document).ready(function() {
+    bindForms("#list");
+});
