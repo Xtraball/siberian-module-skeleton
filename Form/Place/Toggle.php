@@ -1,20 +1,19 @@
 <?php
 /**
- * Class Job_Form_Place_Delete
+ * Class Job_Form_Place_Toggle
  */
-class Job_Form_Place_Delete extends Siberian_Form_Abstract {
+class Job_Form_Place_Toggle extends Siberian_Form_Abstract {
 
     public function init() {
         parent::init();
 
         $this
-            ->setAction(__path("/job/place/deletepost"))
-            ->setAttrib("id", "form-place-delete")
-            ->setConfirmText("You are about to remove this Place !\n Are you sure ?");
+            ->setAction(__path("/job/application/togglejobpost"))
+            ->setAttrib("id", "form-place-toggle")
         ;
 
         /** Bind as a delete form */
-        self::addClass("delete", $this);
+        self::addClass("toggle", $this);
 
         $db = Zend_Db_Table::getDefaultAdapter();
         $select = $db->select()
@@ -26,6 +25,8 @@ class Job_Form_Place_Delete extends Siberian_Form_Abstract {
         $place_id->addValidator("Db_RecordExists", true, $select);
         $place_id->setMinimalDecorator();
 
-        $mini_submit = $this->addMiniSubmit();
+        $this->addMiniSubmit(null, "<i class='fa fa-power-off'></i>", "<i class='fa fa-check'></i>");
+
+        $this->defaultToggle($this->mini_submit, "Enable place", "Disable place");
     }
 }

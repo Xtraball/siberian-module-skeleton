@@ -11,8 +11,9 @@
 */
 
 .edit-action,
-.delete-action {
-    padding: 8px 0 0 0 !important;
+.delete-action,
+.toggle-action {
+    padding: 8px 8px 0 0 !important;
     margin: 0;
     width: 20px;
     cursor: pointer;
@@ -20,4 +21,8 @@
 
 .delete-action {
     padding-top: 5px !important;
+}
+
+.toggle-action {
+    padding-top: 7px !important;
 }

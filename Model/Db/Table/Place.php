@@ -15,9 +15,10 @@ class Job_Model_Db_Table_Place extends Core_Model_Db_Table {
         $select = $this->_db->select()
             ->from(array("place" => "job_place"))
             ->join(array("company" => "job_company"), "place.company_id = company.company_id", array("company_logo" => "logo", "company_name" => "name", "company_location" => "location"))
+            ->join(array("job" => "job"), "job.job_id = company.job_id")
             ->where("company.is_active = ?", true)
             ->where("place.is_active = ?", true)
-            ->where("company.value_id = ?", $values["value_id"])
+            ->where("job.value_id = ?", $values["value_id"])
         ;
 
         return $this->_db->fetchAll($select, $order, $params["limit"], $params["offset"]);

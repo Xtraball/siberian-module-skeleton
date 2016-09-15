@@ -10,7 +10,6 @@ class Job_Form_Options extends Siberian_Form_Abstract {
         $this
             ->setAction(__path("/job/application/editoptionspost"))
             ->setAttrib("id", "form-options")
-            ->setBindJs(true)
         ;
 
         /** Bind as a onchange form */

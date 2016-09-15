@@ -1,15 +1,20 @@
 <?php
 $application = $this->getApplication();
 $option_value = $this->getOptionValue();
+
+$job = new Job_Model_Job();
+$job->find($option_value->getId(), "value_id");
+
 $company = new Job_Model_Company();
 $companies = $company->findAll(array(
-    "value_id" => $option_value->getId(),
+    "job_id" => $job->getId(),
 ));
 
 
 
 # Company form
 $form_company = new Job_Form_Company();
+$form_company->getElement("job_id")->setValue($job->getId());
 $form_company->setValueId($option_value->getId());
 
 $company_options = array();
@@ -46,7 +51,13 @@ $delete_place_form = new Job_Form_Place_Delete();
 
 # Options
 $form_options = new Job_Form_Options();
-$form_place->setValueId($option_value->getId());
+$form_options->setValueId($option_value->getId());
+
+# Toggle job
+$form_place_toggle = new Job_Form_Place_Toggle();
+
+# Toggle company
+$form_company_toggle = new Job_Form_Company_Toggle();
 
 
 ?>
@@ -121,6 +132,7 @@ $form_place->setValueId($option_value->getId());
                             <th><?php echo __("E-Mail"); ?></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -129,8 +141,15 @@ $form_place->setValueId($option_value->getId());
                                 <td><?php echo $company->getName(); ?></td>
                                 <td><?php echo cut($company->getDescription(), 30); ?></td>
                                 <td><?php echo $company->getEmail(); ?></td>
-                                <td class="edit-action">
-                                    <i class="fa fa-pencil toggle-edit" data-id="company_<?php echo $company->getId(); ?>"></i>
+                                <td class="toggle-action">
+                                    <?php
+                                        $form_company_toggle->getElement("company_id")->setValue($company->getId());
+                                        $form_company_toggle->setToggleState($company->getIsActive());
+                                        echo $form_company_toggle;
+                                    ?>
+                                </td>
+                                <td class="edit-action toggle-edit" data-id="company_<?php echo $company->getId(); ?>">
+                                    <i class="fa fa-pencil"></i>
                                 </td>
                                 <td class="delete-action">
                                     <?php
@@ -142,8 +161,10 @@ $form_place->setValueId($option_value->getId());
                                 </td>
                             </tr>
                             <tr class="edit-form" data-id="company_<?php echo $company->getId(); ?>" style="display: none;">
-                                <td colspan="5">
-                                    <i class="fa fa-times toggle-edit" data-id="company_<?php echo $company->getId(); ?>"></i>
+                                <td colspan="6">
+                                    <p class="toggle-edit" data-id="company_<?php echo $company->getId(); ?>">
+                                        <i class="fa fa-times"></i><?php echo __("Close") ?>
+                                    </p>
                                     <?php
                                         $form_company_edit->reset();
                                         $form_company_edit->setValueId($option_value->getId());
@@ -184,16 +205,24 @@ $form_place->setValueId($option_value->getId());
                             <th><?php echo __("Description"); ?></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php foreach($places as $place) : ?>
                             <tr id="place_manage_element_<?php echo $place->getId(); ?>" class="place-manage-element">
-                                <td><?php echo $place->getName(); ?></td>
+                                <td><?php echo cut($place->getName(), 22); ?></td>
                                 <td><?php echo $company_options[$place->getCompanyId()]; ?></td>
                                 <td><?php echo cut($place->getDescription(), 30); ?></td>
-                                <td class="edit-action">
-                                    <i class="fa fa-pencil toggle-edit" data-id="place_<?php echo $place->getId(); ?>"></i>
+                                <td class="toggle-action">
+                                    <?php
+                                        $form_place_toggle->getElement("place_id")->setValue($place->getId());
+                                        $form_place_toggle->setToggleState($place->getIsActive());
+                                        echo $form_place_toggle;
+                                    ?>
+                                </td>
+                                <td class="edit-action toggle-edit" data-id="place_<?php echo $place->getId(); ?>">
+                                    <i class="fa fa-pencil"></i>
                                 </td>
                                 <td class="delete-action">
                                     <?php
@@ -205,8 +234,10 @@ $form_place->setValueId($option_value->getId());
                                 </td>
                             </tr>
                             <tr class="edit-form" data-id="place_<?php echo $place->getId(); ?>" style="display: none;">
-                                <td colspan="5">
-                                    <i class="fa fa-times toggle-edit" data-id="place_<?php echo $place->getId(); ?>"></i>
+                                <td colspan="6">
+                                    <p class="toggle-edit" data-id="place_<?php echo $place->getId(); ?>">
+                                        <i class="fa fa-times"></i><?php echo __("Close") ?>
+                                    </p>
                                     <?php
                                         $form_place_edit->reset();
                                         $form_place_edit->setValueId($option_value->getId());

@@ -8,8 +8,9 @@ class Job_Form_Company_Delete extends Siberian_Form_Abstract {
         parent::init();
 
         $this
-            ->setAction(__path("/job/company/deletepost"))
+            ->setAction(__path("/job/application/deletecompanypost"))
             ->setAttrib("id", "form-company-delete")
+            ->setConfirmText("You are about to remove this Company and all the associated Places !\n Are you sure ?");
         ;
 
         /** Bind as a delete form */

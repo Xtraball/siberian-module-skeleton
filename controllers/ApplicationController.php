@@ -7,6 +7,39 @@ class Job_ApplicationController extends Application_Controller_Default {
      */
     public function editoptionspostAction() {
         $values = $this->getRequest()->getPost();
+
+        $form = new Job_Form_Options();
+        if($form->isValid($values)) {
+
+            $this->getCurrentOptionValue();
+
+            $job = new Job_Model_Job();
+            $job->find($this->getCurrentOptionValue()->getId(), "value_id");
+
+            if(isset($values["display_search"])) {
+                $job->setDisplaySearch($values["display_search"]);
+            }
+
+            if(isset($values["display_logo"])) {
+                $job->setDisplayLogo($values["display_logo"]);
+            }
+
+            $job->save();
+
+            $html = array(
+                "success" => 1,
+                "message" => __("Success."),
+            );
+        } else {
+            /** Do whatever you need when form is not valid */
+            $html = array(
+                "error" => 1,
+                "message" => $form->getTextErrors(),
+                "errors" => $form->getTextErrors(true)
+            );
+        }
+
+        $this->getLayout()->setHtml(Siberian_Json::encode($html));
     }
 
     /**
@@ -19,7 +52,6 @@ class Job_ApplicationController extends Application_Controller_Default {
         if($form->isValid($values)) {
             /** Do whatever you need when form is valid */
             $company = new Job_Model_Company();
-            $company->addData("job_id", $this->getCurrentOptionValue()->getId());
             $company->addData($values);
 
             $path_logo = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values['logo']);
@@ -43,6 +75,35 @@ class Job_ApplicationController extends Application_Controller_Default {
         }
 
         $this->getLayout()->setHtml(Zend_Json::encode($html));
+    }
+
+    /**
+     *
+     */
+    public function deletecompanypostAction() {
+
+        if($id = $this->getRequest()->getParam('company_id')) {
+            $company = new Job_Model_Company();
+            $company->find($id);
+
+            $company->delete();
+
+            $data = array(
+                'success' => 1,
+                'success_message' => __('Company successfully deleted.'),
+                'message_loader' => 0,
+                'message_button' => 0,
+                'message_timeout' => 2
+            );
+        }else{
+            $data = array(
+                'error' => 1,
+                'message' => __('An error occurred while deleting the company. Please try again later.')
+            );
+        }
+
+        $this->getLayout()->setHtml(Zend_Json::encode($data));
+
     }
 
     /**
@@ -92,7 +153,8 @@ class Job_ApplicationController extends Application_Controller_Default {
 
             $html = array(
                 "success" => 1,
-                "message" => (!$result) ? __("Company disabled.") : __("Company enabled."),
+                "state" => $result,
+                "message" => ($result) ? __("Company enabled") : __("Company disabled"),
             );
         } else {
             /** Do whatever you need when form is not valid */
@@ -113,7 +175,8 @@ class Job_ApplicationController extends Application_Controller_Default {
 
             $html = array(
                 "success" => 1,
-                "message" => (!$result) ? __("Place disabled.") : __("Place enabled."),
+                "state" => $result,
+                "message" => ($result) ? __("Place enabled") : __("Place disabled"),
             );
         } else {
             /** Do whatever you need when form is not valid */

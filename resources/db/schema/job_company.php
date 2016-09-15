@@ -7,7 +7,7 @@ $schemas['job_company'] = array(
         'auto_increment' => true,
         'primary' => true,
     ),
-    'value_id' => array(
+    'job_id' => array(
         'type' => 'int(11) unsigned',
     ),
     'name' => array(
