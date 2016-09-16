@@ -16,11 +16,25 @@ $schemas['job_place'] = array(
     'company_id' => array(
         'type' => 'int(11) unsigned',
         'index' => array(
-            'key_name' => 'value_id',
+            'key_name' => 'company_id',
             'index_type' => 'BTREE',
             'is_null' => false,
             'is_unique' => false,
         ),
+    ),
+    'category_id' => array(
+        'type' => 'int(11) unsigned',
+        'index' => array(
+            'key_name' => 'category_id',
+            'index_type' => 'BTREE',
+            'is_null' => false,
+            'is_unique' => false,
+        ),
+    ),
+    'contract_type' => array(
+        'type' => 'varchar(255)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
     ),
     'name' => array(
         'type' => 'varchar(50)',
@@ -38,6 +52,16 @@ $schemas['job_place'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'latitude' => array(
+        'type' => 'varchar(32)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'longitude' => array(
+        'type' => 'varchar(32)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'income_from' => array(
         'type' => 'varchar(128)',
         'charset' => 'utf8',
@@ -51,6 +75,11 @@ $schemas['job_place'] = array(
     'banner' => array(
         'type' => 'varchar(255)',
         'is_null' => true,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'keywords' => array(
+        'type' => 'text',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),

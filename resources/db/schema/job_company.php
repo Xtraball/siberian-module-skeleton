@@ -25,6 +25,16 @@ $schemas['job_company'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'latitude' => array(
+        'type' => 'varchar(32)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'longitude' => array(
+        'type' => 'varchar(32)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'employee_count' => array(
         'type' => 'varchar(128)',
         'charset' => 'utf8',

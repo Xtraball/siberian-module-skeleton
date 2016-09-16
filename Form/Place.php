@@ -7,6 +7,8 @@ class Job_Form_Place extends Siberian_Form_Abstract {
     public function init() {
         parent::init();
 
+        $db = Zend_Db_Table::getDefaultAdapter();
+
         $this
             ->setAction(__path("/job/application/editplacepost"))
             ->setAttrib("id", "form-place")
@@ -37,16 +39,27 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         $company = $this->addSimpleSelect("company_id", __("Company"));
         $company->setRequired(true);
 
-        $db = Zend_Db_Table::getDefaultAdapter();
-        $select = $db->select()
+        $select_company = $db->select()
             ->from('job_company')
             ->where('job_company.company_id = :value')
         ;
-        $company->addValidator("Db_RecordExists", true, $select);
+        $company->addValidator("Db_RecordExists", true, $select_company);
         $company->setRegisterInArrayValidator(false);
 
+        $category = $this->addSimpleSelect("category_id", __("Category"));
+
+        $select_category = $db->select()
+            ->from('job_category')
+            ->where('job_category.category_id = :value')
+        ;
+        $category->addValidator("Db_RecordExists", true, $select_category);
+        $category->setRegisterInArrayValidator(false);
+
+        $contract_type = $this->addSimpleText("contract_type", __("Contract type"));
         $income_from = $this->addSimpleText("income_from", __("Income from:"));
         $income_to = $this->addSimpleText("income_to", __("to:"));
+
+        $keywords = $this->addSimpleText("keywords", __("Keywords"));
 
         $value_id = $this->addSimpleHidden("value_id");
         $value_id

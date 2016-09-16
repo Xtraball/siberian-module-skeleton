@@ -59,6 +59,14 @@ class Job_ApplicationController extends Application_Controller_Default {
             $company->setData("logo", $path_logo);
             $company->setData("header", $path_header);
             $company->setData("is_active", true);
+
+            /** Geocoding */
+            if(!empty($values["location"])) {
+                $coordinates = Siberian_Google_Geocoding::getLatLng(array("address" => $values["location"]));
+                $company->setData("latitude", $coordinates[0]);
+                $company->setData("longitude", $coordinates[1]);
+            }
+
             $company->save();
 
             $html = array(
@@ -125,7 +133,14 @@ class Job_ApplicationController extends Application_Controller_Default {
 
             $path_banner = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values['banner']);
             $place->setData("banner", $path_banner);
-            $place->save();
+
+            /** Geocoding */
+            if(!empty($values["location"])) {
+                $coordinates = Siberian_Google_Geocoding::getLatLng(array("address" => $values["location"]));
+                $place->setData("latitude", $coordinates[0]);
+                $place->setData("longitude", $coordinates[1]);
+            }
+
 
             $place->save();
 
@@ -138,7 +153,46 @@ class Job_ApplicationController extends Application_Controller_Default {
             $html = array(
                 "error" => 1,
                 "message" => $form->getTextErrors(),
-                "errors" => array_filter($form->getErrors())
+                "errors" => $form->getTextErrors(true),
+            );
+        }
+
+        $this->getLayout()->setHtml(Zend_Json::encode($html));
+    }
+
+    /**
+     * Simple edit post, validator
+     */
+    public function editcategorypostAction() {
+        $values = $this->getRequest()->getPost();
+
+        $form = new Job_Form_Category();
+        if($form->isValid($values)) {
+            /** Do whatever you need when form is valid */
+            $category = new Job_Form_Category();
+            $category
+                ->addData($values)
+                ->addData(array(
+                    "is_active" => true,
+                ))
+            ;
+
+            $path_banner = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values['banner']);
+            $category->setData("banner", $path_banner);
+            $category->save();
+
+            $category->save();
+
+            $html = array(
+                "success" => 1,
+                "message" => __("Success."),
+            );
+        } else {
+            /** Do whatever you need when form is not valid */
+            $html = array(
+                "error" => 1,
+                "message" => $form->getTextErrors(),
+                "errors" => $form->getTextErrors(true),
             );
         }
 
