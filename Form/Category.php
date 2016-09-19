@@ -8,7 +8,7 @@ class Job_Form_Category extends Siberian_Form_Abstract {
         parent::init();
 
         $this
-            ->setAction(__path("/job/application/editcategorypost"))
+            ->setAction(__path("/job/category/editpost"))
             ->setAttrib("id", "form-category")
             ->addNav("job-category-nav")
         ;
@@ -26,21 +26,9 @@ class Job_Form_Category extends Siberian_Form_Abstract {
         $description = $this->addSimpleTextarea("description", __("Description"));
         $description->setRequired(true);
 
-        $email = $this->addSimpleText("email", __("E-mail"));
-        $email
-            ->addValidator("EmailAddress")
-            ->setRequired(true)
-        ;
+        $icon = $this->addSimpleImage("icon", __("Icon"), __("Import an icon"), array("width" => 500, "height" => 500, "required" => true));
 
-        $address = $this->addSimpleText("location", __("Address"));
-        $address
-            ->setRequired(true)
-        ;
-
-        $employees = $this->addSimpleText("employee_count", __("Employee count"));
-        
-        $logo = $this->addSimpleImage("logo", __("Logo"), __("Import a logo"), array("width" => 500, "height" => 500, "required" => true));
-        $header = $this->addSimpleImage("header", __("Header"), __("Import a header"), array("width" => 1200, "height" => 400, "required" => true));
+        $keywords = $this->addSimpleText("keywords", __("Keywords"));
 
         $job_id = $this->addSimpleHidden("job_id");
         $job_id
@@ -53,7 +41,7 @@ class Job_Form_Category extends Siberian_Form_Abstract {
         ;
     }
 
-    public function setCompanyId($company_id) {
-        $this->getElement("company_id")->setValue($company_id)->setRequired(true);
+    public function setCategoryId($category_id) {
+        $this->getElement("category_id")->setValue($category_id)->setRequired(true);
     }
 }

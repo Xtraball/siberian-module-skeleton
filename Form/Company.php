@@ -8,8 +8,9 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         parent::init();
 
         $this
-            ->setAction(__path("/job/application/editcompanypost"))
+            ->setAction(__path("/job/company/editpost"))
             ->setAttrib("id", "form-company")
+            ->setAttrib("autocomplete", "off")
             ->addNav("job-company-nav")
         ;
 
@@ -24,13 +25,21 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         ;
 
         $description = $this->addSimpleTextarea("description", __("Description"));
-        $description->setRequired(true);
+        $description
+            ->setRequired(true)
+            ->setNewDesignLarge()
+            ->setRichtext()
+        ;
 
         $email = $this->addSimpleText("email", __("E-mail"));
         $email
             ->addValidator("EmailAddress")
             ->setRequired(true)
+            ->setAttrib("autocomplete", "job-company-email")
         ;
+
+        $password = $this->addSimplePassword("_password_", __("Password"));
+        $password->setDescription(__("By setting up a password, this company can use the API to manage it's account & places.<br />Leave blank to disable the API access."));
 
         $address = $this->addSimpleText("location", __("Address"));
         $address

@@ -13,6 +13,15 @@ $schemas['job_category'] = array(
         'auto_increment' => true,
         'primary' => true,
     ),
+    'job_id' => array(
+        'type' => 'int(11) unsigned',
+        'index' => array(
+            'key_name' => 'category_job_id',
+            'index_type' => 'BTREE',
+            'is_null' => false,
+            'is_unique' => false,
+        ),
+    ),
     'name' => array(
         'type' => 'varchar(50)',
         'charset' => 'utf8',
@@ -29,7 +38,7 @@ $schemas['job_category'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
-    'banner' => array(
+    'icon' => array(
         'type' => 'varchar(255)',
         'is_null' => true,
         'charset' => 'utf8',

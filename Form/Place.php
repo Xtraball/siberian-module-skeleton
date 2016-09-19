@@ -10,7 +10,7 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         $db = Zend_Db_Table::getDefaultAdapter();
 
         $this
-            ->setAction(__path("/job/application/editplacepost"))
+            ->setAction(__path("/job/place/editpost"))
             ->setAttrib("id", "form-place")
             ->addNav("job-place-nav");
         ;
@@ -28,7 +28,11 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         ;
 
         $description = $this->addSimpleTextarea("description", __("Description"));
-        $description->setRequired(true);
+        $description
+            ->setRequired(true)
+            ->setNewDesignLarge()
+            ->setRichtext()
+        ;
 
 
         $address = $this->addSimpleText("location", __("Address"));

@@ -14,7 +14,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         templateUrl: "modules/job/templates/l1/view-company.html"
     });
 
-}).controller('JobListController', function($cordovaSocialSharing, $ionicModal, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job) {
+}).controller('JobListController', function($cordovaGeolocation, $cordovaSocialSharing, $ionicModal, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job) {
 
     $scope.$on("connectionStateChange", function(event, args) {
         if(args.isOnline == true) {
@@ -40,11 +40,14 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.time = null;
 
     $scope.filters = {
+        time: 0,
+        pull_to_refresh: false,
+        count: 0,
         fulltext: "",
         category: null,
-        location: null
+        locality: null,
+        position: null
     };
-    
 
     $scope.filterPlaces = function(place) {
         var concat = place.title+place.subtitle+place.location+place.contract_type;
@@ -62,7 +65,11 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     $scope.loadContent = function(type) {
 
-        Job.findAll(0, false, 0).success(function(data) {
+        $scope.filters.time = 0;
+        $scope.filters.pull_to_refresh = false;
+        $scope.filters.count = 0;
+
+        Job.findAll($scope.filters).success(function(data) {
 
             $scope.collection = $scope.collection.concat(data.collection);
             $scope.page_title = data.page_title;
@@ -78,12 +85,15 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     $scope.loadMore = function() {
         var time = 0;
-        console.log($scope.collection.length);
         if($scope.collection.length > 0) {
             time = $scope.collection[$scope.collection.length-1].time;
         }
 
-        Job.findAll(time, false, $scope.collection.length).success(function(data) {
+        $scope.filters.time = time;
+        $scope.filters.pull_to_refresh = false;
+        $scope.filters.count = $scope.collection.length;
+
+        Job.findAll($scope.filters).success(function(data) {
 
             $scope.collection = $scope.collection.concat(data.collection);
             $scope.page_title = data.page_title;
@@ -100,12 +110,15 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     $scope.pullToRefresh = function() {
         var time = 0;
-        console.log($scope.collection.length);
         if($scope.collection.length > 0) {
             time = $scope.collection[0].time;
         }
 
-        Job.findAll(time, true, $scope.collection.length).success(function(data) {
+        $scope.filters.time = time;
+        $scope.filters.pull_to_refresh = true;
+        $scope.filters.count = $scope.collection.length;
+
+        Job.findAll( $scope.filters).success(function(data) {
 
             $scope.collection = data.collection.concat($scope.collection);
 
@@ -124,7 +137,13 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         $state.go("job-view", {value_id: $scope.value_id, place_id: item.id});
     };
 
-    $scope.loadContent();
+    $cordovaGeolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }).then(function(position) {
+        $scope.filters.position = position;
+        $scope.loadContent();
+    }, function() {
+        $scope.filters.position = null;
+        $scope.loadContent();
+    });
 
 }).controller('JobViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Url, AUTH_EVENTS, CACHE_EVENTS) {
 
@@ -159,7 +178,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     $scope.loadContent();
 
-}).controller('CompanyViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Url, AUTH_EVENTS, CACHE_EVENTS) {
+}).controller('CompanyViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $ionicScrollDelegate, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Url, AUTH_EVENTS, CACHE_EVENTS) {
 
     $scope.$on("connectionStateChange", function(event, args) {
         if(args.isOnline == true) {
@@ -183,6 +202,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
         }).finally(function() {
             $scope.is_loading = false;
+            $ionicScrollDelegate.scrollTop();
         });
     };
 

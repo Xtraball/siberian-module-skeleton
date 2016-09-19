@@ -8,7 +8,7 @@ class Job_Form_Company_Toggle extends Siberian_Form_Abstract {
         parent::init();
 
         $this
-            ->setAction(__path("/job/application/togglecompanypost"))
+            ->setAction(__path("/job/company/togglepost"))
             ->setAttrib("id", "form-company-toggle")
         ;
 

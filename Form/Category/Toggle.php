@@ -1,15 +1,15 @@
 <?php
 /**
- * Class Job_Form_Place_Toggle
+ * Class Job_Form_Category_Toggle
  */
-class Job_Form_Place_Toggle extends Siberian_Form_Abstract {
+class Job_Form_Category_Toggle extends Siberian_Form_Abstract {
 
     public function init() {
         parent::init();
 
         $this
-            ->setAction(__path("/job/place/togglepost"))
-            ->setAttrib("id", "form-place-toggle")
+            ->setAction(__path("/job/category/togglepost"))
+            ->setAttrib("id", "form-category-toggle")
         ;
 
         /** Bind as a delete form */
@@ -17,16 +17,16 @@ class Job_Form_Place_Toggle extends Siberian_Form_Abstract {
 
         $db = Zend_Db_Table::getDefaultAdapter();
         $select = $db->select()
-            ->from('job_place')
-            ->where('job_place.place_id = :value')
+            ->from('job_category')
+            ->where('job_category.category_id = :value')
         ;
 
-        $place_id = $this->addSimpleHidden("place_id", __("Place"));
+        $place_id = $this->addSimpleHidden("category_id", __("Category"));
         $place_id->addValidator("Db_RecordExists", true, $select);
         $place_id->setMinimalDecorator();
 
         $this->addMiniSubmit(null, "<i class='fa fa-power-off'></i>", "<i class='fa fa-check'></i>");
 
-        $this->defaultToggle($this->mini_submit, "Enable place", "Disable place");
+        $this->defaultToggle($this->mini_submit, "Enable category", "Disable category");
     }
 }

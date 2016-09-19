@@ -9,6 +9,12 @@ $schemas['job_company'] = array(
     ),
     'job_id' => array(
         'type' => 'int(11) unsigned',
+        'index' => array(
+            'key_name' => 'company_job_id',
+            'index_type' => 'BTREE',
+            'is_null' => false,
+            'is_unique' => false,
+        ),
     ),
     'name' => array(
         'type' => 'varchar(255)',
@@ -42,6 +48,11 @@ $schemas['job_company'] = array(
     ),
     'email' => array(
         'type' => 'varchar(64)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
+    'password' => array(
+        'type' => 'varchar(255)',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),

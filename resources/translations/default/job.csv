@@ -2,6 +2,7 @@
 "Company"
 "You are about to remove this Company and all the associated Places !\n Are you sure ?"
 "You are about to remove this Place !\n Are you sure ?"
+"You are about to remove this Category !\n Are you sure ?"
 "Contract type"
 "Header"
 "Name"
@@ -12,3 +13,4 @@
 "Income from:"
 "to:"
 "Keywords"
+"Place successfully deleted."

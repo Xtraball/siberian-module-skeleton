@@ -2,6 +2,7 @@
 "Company":"Entreprise"
 "You are about to remove this Company and all the associated Places !\n Are you sure ?"
 "You are about to remove this Place !\n Are you sure ?"
+"You are about to remove this Category !\n Are you sure ?"
 "Contract type":"Type de contrat"
 "Header":"Image d'entête"
 "Name":"Titre"
@@ -11,3 +12,4 @@
 "Income from:":"Rémunération entre:"
 "to:":"et:"
 "Keywords":"Mot clés"
+"Place successfully deleted.":"Job supprimé."

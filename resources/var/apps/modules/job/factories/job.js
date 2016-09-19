@@ -5,16 +5,13 @@ App.factory('Job', function($rootScope, $http, httpCache, Url, CACHE_EVENTS, Cus
 
     factory.value_id = null;
 
-    factory.findAll = function(time, pull_to_refresh, count) {
+    factory.findAll = function(options) {
 
         if(!this.value_id) return;
 
-        var options = {
-            value_id: this.value_id,
-            time: time,
-            pull_to_refresh: pull_to_refresh,
-            count: count
-        };
+        options.concat({
+            value_id: this.value_id
+        });
 
         return $http({
             method: 'GET',
