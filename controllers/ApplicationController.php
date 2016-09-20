@@ -20,8 +20,8 @@ class Job_ApplicationController extends Application_Controller_Default {
                 $job->setDisplaySearch($values["display_search"]);
             }
 
-            if(isset($values["display_logo"])) {
-                $job->setDisplayLogo($values["display_logo"]);
+            if(isset($values["display_place_icon"])) {
+                $job->setDisplayPlaceIcon($values["display_place_icon"]);
             }
 
             $job->save();

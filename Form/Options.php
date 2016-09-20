@@ -16,7 +16,7 @@ class Job_Form_Options extends Siberian_Form_Abstract {
         self::addClass("onchange", $this);
 
         $display_search = $this->addSimpleCheckbox("display_search", __("Display Search"));
-        $display_logo = $this->addSimpleCheckbox("display_logo", __("Display Logo"));
+        $display_place_icon = $this->addSimpleCheckbox("display_place_icon", __("Display place icon"));
 
         $value_id = $this->addSimpleHidden("value_id");
         $value_id

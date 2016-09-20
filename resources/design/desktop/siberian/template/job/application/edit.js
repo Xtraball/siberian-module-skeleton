@@ -19,4 +19,19 @@ $(document).ready(function() {
             $("table.sb-pager tr.edit-form[data-id]").hide()
         }
     });
+
+    /** Simulate bootstrap tabs */
+    $("ul[role='tablist'] a[role='tab']").on("click", function(e) {
+        e.preventDefault();
+
+        var el = $(this);
+        var target = el.attr("aria-controls");
+
+        $("ul[role='tablist'] li[role='presentation']").removeClass("active");
+        el.parent("li").addClass("active");
+
+        $("ul[role='tablist']").next("div.tab-content").find("div.tab-pane").hide();
+        $("ul[role='tablist']").next("div.tab-content").find("div#"+target).show();
+    });
 });
+

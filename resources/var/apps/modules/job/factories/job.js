@@ -9,9 +9,7 @@ App.factory('Job', function($rootScope, $http, httpCache, Url, CACHE_EVENTS, Cus
 
         if(!this.value_id) return;
 
-        options.concat({
-            value_id: this.value_id
-        });
+        Object.assign(options, {value_id: this.value_id} );
 
         return $http({
             method: 'GET',

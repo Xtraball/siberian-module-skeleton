@@ -33,7 +33,7 @@
 
 
             <div class="item item-text-wrap item-custom" ng-if="company.subtitle">
-                <p>{{ company.subtitle }}</p>
+                <p ng-bind-html="company.subtitle"></p>
             </div>
 
             <div class="list" ng-show="company.places.length">
@@ -46,7 +46,7 @@
                     <div class="item item-custom item-place" ng-class="{ 'item-avatar': place.company_logo && options.show_logo }">
                         <img ng-src="{{ place.company_logo }}" ng-if="place.company_logo && options.show_logo" />
                         <h2>{{ place.title }} <span ng-if="place.contract_type">{{ place.contract_type }}</span></h2>
-                        <p class="subtitle" ng-if="place.subtitle">{{ place.subtitle }}</p>
+                        <p class="subtitle" ng-if="place.subtitle" ng-bind-html="place.subtitle"></p>
                         <p class="subtitle-company" ng-if="place.company_name || place.location">
                             <span ng-if="place.company_name">{{ place.company_name }}</span>
                             <span ng-if="place.company_name && place.location">, </span>
@@ -61,33 +61,3 @@
     </ion-content>
     
 </ion-view>
-
-<style type="text/css">
-    .job-company-logo {
-        position: absolute;
-        width: 25%;
-        left: 26px;
-        bottom: 34px;
-        z-index: 1000;
-        border: 4px solid rgba(255,255,255,0.85);
-        border-radius: 2px;
-    }
-    .job-company-header {
-        text-align: left;
-    }
-    .job-company-header p {
-        font-weight: normal;
-    }
-    .job-company-header h2 {
-        margin-left: calc(25vw + 26px);
-    }
-    .job-company-header p.employee {
-        margin-left: calc(25vw + 26px);
-    }
-    .job-company-header p.location {
-        margin-left: 12px;
-    }
-    .job-company-header p i {
-        margin-right: 6px;
-    }
-</style>

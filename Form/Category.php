@@ -24,7 +24,11 @@ class Job_Form_Category extends Siberian_Form_Abstract {
         ;
 
         $description = $this->addSimpleTextarea("description", __("Description"));
-        $description->setRequired(true);
+        $description
+            ->setRequired(true)
+            ->setNewDesignLarge()
+            ->setRichtext()
+        ;
 
         $icon = $this->addSimpleImage("icon", __("Icon"), __("Import an icon"), array("width" => 500, "height" => 500, "required" => true));
 

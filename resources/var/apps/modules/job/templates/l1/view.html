@@ -23,7 +23,7 @@
             </div>
 
             <div class="item item-text-wrap item-custom" ng-if="place.subtitle">
-                <p>{{ place.subtitle }}</p>
+                <p ng-bind-html="place.subtitle"></p>
             </div>
 
             <div class="item item-text-wrap item-icon-left item-custom" ng-if="place.location">

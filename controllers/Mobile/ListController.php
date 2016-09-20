@@ -43,7 +43,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                         $collection[] = array(
                             "id" => $place["place_id"],
                             "title" => $place["name"],
-                            "subtitle" => $place["description"],
+                            "subtitle" => strip_tags($place["description"]),
                             "location" => $place["location"],
                             "company_logo" => ($place["company_logo"]) ? $this->getRequest()->getBaseUrl()."/images/application".$place["company_logo"] : null,
                             "company_name" => $place["company_name"],
@@ -53,9 +53,38 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
 
                 }
 
+                $job = new Job_Model_Job();
+                $job->find($value_id, "value_id");
+                $options = array(
+                    "display_search" => filter_var($job->getDisplaySearch(), FILTER_VALIDATE_BOOLEAN),
+                    "display_place_icon" => filter_var($job->getDisplayPlaceIcon(), FILTER_VALIDATE_BOOLEAN),
+                );
+
+                $category = new Job_Model_Category();
+                $categories = $category->findAll(array(
+                    "job_id" => $job->getId(),
+                    "is_active" => true,
+                ));
+
+                $all_categories = array();
+                foreach($categories as $_category) {
+                    $all_categories[] = array(
+                        "title" => $_category->getName(),
+                        "subtitle" => $_category->getDescription(),
+                        "icon" => ($_category->getIcon()) ? $this->getRequest()->getBaseUrl()."/images/application".$_category->getIcon() : null,
+                        "keywords" => $_category->getKeywords(),
+                    );
+                }
+                $options = array(
+                    "display_search" => filter_var($job->getDisplaySearch(), FILTER_VALIDATE_BOOLEAN),
+                    "display_place_icon" => filter_var($job->getDisplayPlaceIcon(), FILTER_VALIDATE_BOOLEAN),
+                );
+
                 $html = array(
                     "success" => 1,
                     "collection" => $collection,
+                    "options" => $options,
+                    "categories" => $all_categories,
                     "more" => (count($total) > $count),
                     "page_title" => $this->getCurrentOptionValue()->getTabbarName(),
                 );
@@ -98,7 +127,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "company_id" => $place->getCompanyId(),
                             "company" => array(
                                 "title" => $company->getName(),
-                                "subtitle" => $company->getDescription(),
+                                "subtitle" => strip_tags($company->getDescription()),
                                 "location" => $company->getLocation(),
                                 "email" => $company->getEmail(),
                                 "logo" => ($company->getLogo()) ? $this->getRequest()->getBaseUrl()."/images/application".$company->getLogo() : null,
@@ -153,7 +182,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             $_places[] = array(
                                 "id" => $place->getId(),
                                 "title" => $place->getName(),
-                                "subtitle" => $place->getDescription(),
+                                "subtitle" => html_entity_decode($place->getDescription()),
                                 "banner" => ($place->getBanner()) ? $this->getRequest()->getBaseUrl()."/images/application".$place->getBanner() : null,
                                 "location" => $place->getLocation(),
                                 "income_from" => $place->getIncomeFrom(),
@@ -164,7 +193,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                         $company = array(
                             "id" => $company->getId(),
                             "title" => $company->getName(),
-                            "subtitle" => $company->getDescription(),
+                            "subtitle" => htmlspecialchars_decode($company->getDescription()),
                             "logo" => ($company->getLogo()) ? $this->getRequest()->getBaseUrl()."/images/application".$company->getLogo() : null,
                             "header" => ($company->getHeader()) ? $this->getRequest()->getBaseUrl()."/images/application".$company->getHeader() : null,
                             "location" => $company->getLocation(),

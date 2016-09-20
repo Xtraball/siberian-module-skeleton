@@ -61,6 +61,7 @@ $delete_place_form = new Job_Form_Place_Delete();
 # Options
 $form_options = new Job_Form_Options();
 $form_options->setValueId($option_value->getId());
+$form_options->populate($job->getData());
 
 # Toggle job
 $form_place_toggle = new Job_Form_Place_Toggle();
@@ -235,7 +236,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                             </button>
                         </h3>
                         <div class="container-fluid first-row-feature feature-manage-items">
-                            <table class="table content-white-bkg datatable">
+                            <table class="table content-white-bkg sb-pager">
                                 <thead>
                                 <tr class="border-blue">
                                     <th style="width:26%;"><?php echo __("Name"); ?></th>
@@ -248,7 +249,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                                 </thead>
                                 <tbody>
                                 <?php foreach($places as $place) : ?>
-                                    <tr id="place_manage_element_<?php echo $place->getId(); ?>" class="place-manage-element">
+                                    <tr id="place_manage_element_<?php echo $place->getId(); ?>" class="place-manage-element sb-pager">
                                         <td><?php echo cut($place->getName(), 22); ?></td>
                                         <td><?php echo $company_options[$place->getCompanyId()]; ?></td>
                                         <td><?php echo cut($place->getDescription(), 30); ?></td>
@@ -380,30 +381,4 @@ $delete_category_form = new Job_Form_Category_Delete();
 </div>
 
 <link href="/app/local/modules/Job/resources/design/desktop/flat/template/job/application/edit.css" media="screen" rel="stylesheet" type="text/css">
-<script type="text/javascript">
-    var dataTableLanguage = {
-        "decimal":        "",
-        "emptyTable":     "<?php echo __js("No data available in table") ?>",
-        "info":           "<?php echo __js("Showing _START_ to _END_ of _TOTAL_ entries") ?>",
-        "infoEmpty":      "<?php echo __js("Showing 0 to 0 of 0 entries") ?>",
-        "infoFiltered":   "<?php echo __js("(filtered from _MAX_ total entries)") ?>",
-        "infoPostFix":    "",
-        "thousands":      ",",
-        "lengthMenu":     "<?php echo __js("Show _MENU_ entries") ?>",
-        "loadingRecords": "<?php echo __js("Loading...") ?>",
-        "processing":     "<?php echo __js("Processing...") ?>",
-        "search":         "<?php echo __js("Search:") ?>",
-        "zeroRecords":    "<?php echo __js("No matching records found") ?>",
-        "paginate": {
-            "first":      "<?php echo __js("First") ?>",
-            "last":       "<?php echo __js("Last") ?>",
-            "next":       "<?php echo __js("Next") ?>",
-            "previous":   "<?php echo __js("Previous") ?>"
-        },
-        "aria": {
-            "sortAscending":  "<?php echo __js(": activate to sort column ascending") ?>",
-            "sortDescending": "<?php echo __js(": activate to sort column descending") ?>"
-        }
-    };
-</script>
 <script type="text/javascript" src="/app/local/modules/Job/resources/design/desktop/flat/template/job/application/edit.js"></script>

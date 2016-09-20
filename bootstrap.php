@@ -9,5 +9,9 @@ class Job_Bootstrap {
         "modules/job/controllers/job.js",
         "modules/job/factories/job.js",
     ));
+
+    Siberian_Assets::addStylesheets(array(
+        "modules/job/css/styles.css",
+    ));
   }
 }

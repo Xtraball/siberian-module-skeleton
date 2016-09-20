@@ -25,7 +25,7 @@ class Job_Form_Company_Toggle extends Siberian_Form_Abstract {
         $place_id->addValidator("Db_RecordExists", true, $select);
         $place_id->setMinimalDecorator();
 
-        $this->addMiniSubmit(null, "<i class='fa fa-power-off'></i>", "<i class='fa fa-check'></i>");
+        $this->addMiniSubmit(null, "<i class='fa fa-power-off icon icon-power-off'></i>", "<i class='fa fa-check icon icon-ok'></i>");
 
         $this->defaultToggle($this->mini_submit, "Enable company", "Disable company");
     }

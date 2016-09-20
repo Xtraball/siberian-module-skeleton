@@ -23,30 +23,33 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     });
 
     $scope.options = {
-        show_logo: false,
-        show_search: false
+        display_place_icon: false,
+        display_search: false
     };
 
-    $scope.DEFAULT = 0;
-    $scope.LOAD_MORE = 1;
-    $scope.PULL_TO_REFRESH = 2;
-
     $scope.collection = new Array();
+    $scope.categories = new Array();
+
     $scope.can_load_older_places = false;
     $scope.social_sharing_active = false;
     $scope.is_loading = true;
     $scope.value_id = Job.value_id = $stateParams.value_id;
     $scope.offset = null;
     $scope.time = null;
+    $scope.modal = null;
+
+    $scope.distance_range = new Array(1, 5, 10, 20, 50, 75, 100, 125, 150, 200);
+    $scope.Math = window.Math;
 
     $scope.filters = {
         time: 0,
         pull_to_refresh: false,
         count: 0,
         fulltext: "",
-        category: null,
         locality: null,
-        position: null
+        position: null,
+        keywords: null,
+        distance: 3
     };
 
     $scope.filterPlaces = function(place) {
@@ -63,6 +66,44 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         return result;
     };
 
+    /** Re-run findAll with new options */
+    $scope.validateFilters = function() {
+        $scope.collection = new Array();
+        $scope.loadContent();
+    };
+
+    /** Reset filters */
+    $scope.clearFilters = function() {
+        angular.forEach($scope.categories, function(value, key) {
+            $scope.categories[key].is_checked = false;
+        });
+
+        $scope.filters.fulltext = "";
+        $scope.filters.locality = null;
+        $scope.filters.position = null;
+        $scope.filters.keywords = null;
+        $scope.filters.distance = 3;
+
+        $scope.closeFilterModal();
+
+        $scope.collection = new Array();
+        $scope.loadContent();
+    };
+
+    $scope.filterModal = function() {
+        $ionicModal.fromTemplateUrl('modules/job/templates/l1/more.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.modal = modal;
+            $scope.modal.show();
+        });
+    };
+
+    $scope.closeFilterModal = function() {
+        $scope.modal.hide();
+    };
+
     $scope.loadContent = function(type) {
 
         $scope.filters.time = 0;
@@ -71,7 +112,9 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
         Job.findAll($scope.filters).success(function(data) {
 
+            $scope.options = data.options;
             $scope.collection = $scope.collection.concat(data.collection);
+            $scope.categories = data.categories;
             $scope.page_title = data.page_title;
             $scope.can_load_older_places = data.more;
 

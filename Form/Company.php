@@ -31,6 +31,7 @@ class Job_Form_Company extends Siberian_Form_Abstract {
             ->setRichtext()
         ;
 
+
         $email = $this->addSimpleText("email", __("E-mail"));
         $email
             ->addValidator("EmailAddress")
@@ -38,8 +39,13 @@ class Job_Form_Company extends Siberian_Form_Abstract {
             ->setAttrib("autocomplete", "job-company-email")
         ;
 
+        /** Disabling password until APi is ready
+        $fake_hidden = $this->addSimplePassword("__fake_password__");
+        $fake_hidden->setAttrib("style", "display: none;");
+
         $password = $this->addSimplePassword("_password_", __("Password"));
         $password->setDescription(__("By setting up a password, this company can use the API to manage it's account & places.<br />Leave blank to disable the API access."));
+        */
 
         $address = $this->addSimpleText("location", __("Address"));
         $address

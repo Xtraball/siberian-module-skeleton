@@ -18,9 +18,9 @@ $schemas['job'] = array(
     ),
     'display_search' => array(
         'type' => 'tinyint(1) unsigned',
-        'default' => '0',
+        'default' => '1',
     ),
-    'display_logo' => array(
+    'display_place_icon' => array(
         'type' => 'tinyint(1) unsigned',
         'default' => '0',
     ),
