@@ -18,6 +18,9 @@ class Job_Form_Options extends Siberian_Form_Abstract {
         $display_search = $this->addSimpleCheckbox("display_search", __("Display Search"));
         $display_place_icon = $this->addSimpleCheckbox("display_place_icon", __("Display place icon"));
 
+        //$title_company = $this->addSimpleText("title_company", __("Alternate name for 'Company'"));
+        //$title_place = $this->addSimpleText("title_place", __("Alternate name for 'Place'"));
+
         $value_id = $this->addSimpleHidden("value_id");
         $value_id
             ->setRequired(true)

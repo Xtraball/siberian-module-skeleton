@@ -24,6 +24,18 @@ $schemas['job'] = array(
         'type' => 'tinyint(1) unsigned',
         'default' => '0',
     ),
+    'title_company' => array(
+        'type' => 'varchar(128)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'default' => 'Company',
+    ),
+    'title_place' => array(
+        'type' => 'varchar(128)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'default' => 'Place',
+    ),
     'created_at' => array(
         'type' => 'datetime',
     ),

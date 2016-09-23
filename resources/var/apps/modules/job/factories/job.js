@@ -9,11 +9,22 @@ App.factory('Job', function($rootScope, $http, httpCache, Url, CACHE_EVENTS, Cus
 
         if(!this.value_id) return;
 
-        Object.assign(options, {value_id: this.value_id} );
+        angular.extend(options, {
+            value_id: this.value_id
+        });
+
+        if(options.position !== false) {
+            angular.extend(options, {
+                latitude: options.position.latitude,
+                longitude: options.position.longitude,
+                accuracy: options.position.accuracy
+            });
+        }
 
         return $http({
-            method: 'GET',
-            url: Url.get("job/mobile_list/findall", options),
+            method: 'POST',
+            url: Url.get("job/mobile_list/findall"),
+            data: options,
             cache: false,
             responseType:'json'
         });

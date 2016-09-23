@@ -38,7 +38,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.time = null;
     $scope.modal = null;
 
-    $scope.distance_range = new Array(1, 5, 10, 20, 50, 75, 100, 125, 150, 200);
+    $scope.distance_range = new Array(1, 5, 10, 20, 50, 75, 100, 150, 200, 500, 1000);
     $scope.Math = window.Math;
 
     $scope.filters = {
@@ -49,15 +49,19 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         locality: null,
         position: null,
         keywords: null,
-        distance: 3
+        radius: 3,
+        distance: 0,
+        categories: null,
+        more_search: false
     };
 
     $scope.filterPlaces = function(place) {
-        var concat = place.title+place.subtitle+place.location+place.contract_type;
+        var concat = place.title+place.subtitle+place.location+place.contract_type+place.company_name;
         var result = true;
 
         var parts = $scope.filters.fulltext.split(" ");
         for(var i = 0; i < parts.length; i++) {
+            var filtered = parts[i].replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
             var regexp = new RegExp(parts[i], "gi");
 
             result = result && concat.match(regexp);
@@ -68,6 +72,11 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     /** Re-run findAll with new options */
     $scope.validateFilters = function() {
+        $scope.filters.position = false;
+        $scope.filters.more_search = true;
+
+        $scope.closeFilterModal();
+
         $scope.collection = new Array();
         $scope.loadContent();
     };
@@ -75,14 +84,16 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     /** Reset filters */
     $scope.clearFilters = function() {
         angular.forEach($scope.categories, function(value, key) {
-            $scope.categories[key].is_checked = false;
+            $scope.filter.categories[key].is_checked = false;
         });
 
         $scope.filters.fulltext = "";
         $scope.filters.locality = null;
-        $scope.filters.position = null;
+        $scope.filters.more_search = false;
+        $scope.filters.position = false;
         $scope.filters.keywords = null;
-        $scope.filters.distance = 3;
+        $scope.filters.radius = 0;
+        $scope.filters.distance = 0;
 
         $scope.closeFilterModal();
 
@@ -114,7 +125,10 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
             $scope.options = data.options;
             $scope.collection = $scope.collection.concat(data.collection);
-            $scope.categories = data.categories;
+            if($scope.filters.categories == null) {
+                $scope.filters.categories = data.categories;
+            }
+            $scope.filters.locality = data.locality;
             $scope.page_title = data.page_title;
             $scope.can_load_older_places = data.more;
 
@@ -127,12 +141,19 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     };
 
     $scope.loadMore = function() {
+        if($scope.filters.more_search) {
+            return;
+        }
+
         var time = 0;
+        var distance = 0;
         if($scope.collection.length > 0) {
             time = $scope.collection[$scope.collection.length-1].time;
+            distance = $scope.collection[$scope.collection.length-1].distance;
         }
 
         $scope.filters.time = time;
+        $scope.filters.distance = distance;
         $scope.filters.pull_to_refresh = false;
         $scope.filters.count = $scope.collection.length;
 
@@ -152,16 +173,23 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     };
 
     $scope.pullToRefresh = function() {
+        if($scope.filters.more_search) {
+            return;
+        }
+
         var time = 0;
+        var distance = 0;
         if($scope.collection.length > 0) {
             time = $scope.collection[0].time;
+            distance = $scope.collection[0].distance;
         }
 
         $scope.filters.time = time;
+        $scope.filters.distance = distance;
         $scope.filters.pull_to_refresh = true;
         $scope.filters.count = $scope.collection.length;
 
-        Job.findAll( $scope.filters).success(function(data) {
+        Job.findAll($scope.filters).success(function(data) {
 
             $scope.collection = data.collection.concat($scope.collection);
 
@@ -181,10 +209,10 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     };
 
     $cordovaGeolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }).then(function(position) {
-        $scope.filters.position = position;
+        $scope.filters.position = position.coords;
         $scope.loadContent();
     }, function() {
-        $scope.filters.position = null;
+        $scope.filters.position = false;
         $scope.loadContent();
     });
 
@@ -219,6 +247,10 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         $state.go("company-view", {value_id: $scope.value_id, company_id: company_id});
     };
 
+    $scope.goHome = function(item) {
+        $state.go("job-list", {value_id: $scope.value_id});
+    };
+
     $scope.loadContent();
 
 }).controller('CompanyViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $ionicScrollDelegate, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Url, AUTH_EVENTS, CACHE_EVENTS) {
@@ -251,6 +283,10 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     $scope.showPlace = function(place_id) {
         $state.go("job-view", {value_id: $scope.value_id, place_id: place_id});
+    };
+
+    $scope.goHome = function(item) {
+        $state.go("job-list", {value_id: $scope.value_id});
     };
 
     $scope.loadContent();
