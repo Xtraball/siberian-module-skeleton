@@ -17,6 +17,7 @@ $companies = $company->findAll(array(
 $form_company = new Job_Form_Company();
 $form_company->getElement("job_id")->setValue($job->getId());
 $form_company->setValueId($option_value->getId());
+$form_company->addNav("job-company-save-nav", "OK", false);
 
 $company_options = array();
 foreach($companies as $_company) {
@@ -39,6 +40,7 @@ if(!empty($company_options)) {
     $form_place->getElement("company_id")->addMultiOptions($company_options);
 }
 $form_place->setValueId($option_value->getId());
+$form_place->addNav("job-place-save-nav", "OK", false);
 
 if(!$job->getDisplayIncome()) {
     $form_place->removeIncome();
@@ -81,6 +83,9 @@ $form_category
     ->setValueId($option_value->getId())
     ->getElement("job_id")->setValue($job->getId())
 ;
+
+$form_category->addNav("job-category-save-nav", "OK", false);
+
 
 $form_category_toggle = new Job_Form_Category_Toggle();
 $delete_category_form = new Job_Form_Category_Delete();
