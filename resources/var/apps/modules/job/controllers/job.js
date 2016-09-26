@@ -24,7 +24,8 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
     $scope.options = {
         display_place_icon: false,
-        display_search: false
+        display_search: true,
+        display_income: true
     };
 
     $scope.collection = new Array();
@@ -216,7 +217,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         $scope.loadContent();
     });
 
-}).controller('JobViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Url, AUTH_EVENTS, CACHE_EVENTS) {
+}).controller('JobViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $location, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Social) {
 
     $scope.$on("connectionStateChange", function(event, args) {
         if(args.isOnline == true) {
@@ -227,6 +228,13 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.social_sharing_active = false;
     $scope.is_loading = true;
     $scope.value_id = Job.value_id = $stateParams.value_id;
+    $scope.modal = null;
+
+    $scope.form = {
+        fullname: "",
+        email: "",
+        message: ""
+    };
 
     $scope.loadContent = function() {
 
@@ -234,12 +242,59 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
             $scope.place = data.place;
             $scope.page_title = data.page_title;
-
             $scope.social_sharing_active = !!(data.social_sharing_is_active == 1 && !Application.is_webview);
-
 
         }).finally(function() {
             $scope.is_loading = false;
+        });
+    };
+
+    $scope.contactAction = function() {
+        switch($scope.place.display_contact) {
+            case "contactform": case "both":
+                $scope.contactModal();
+                break;
+            case "email":
+                $window.open("mailto:"+ $scope.place.email + "?subject=" + $translate.instant("New contact for: ")+$scope.place.title,"_self");
+                break;
+            default:
+        }
+    };
+
+    $scope.contactModal = function() {
+        $ionicModal.fromTemplateUrl('modules/job/templates/l1/contact.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.modal = modal;
+            $scope.modal.show();
+        });
+    };
+
+    $scope.closeContactModal = function() {
+        /** Clear form */
+        $scope.form.fullname = "";
+        $scope.form.email = "";
+        $scope.form.message = "";
+
+        $scope.modal.hide();
+    };
+
+    $scope.submitContact = function() {
+        if($scope.form.fullname == "" || $scope.form.email == "" || $scope.form.message == "") {
+            Dialog.alert($translate.instant("Form error"), $translate.instant("All fields are required !"), $translate.instant("OK"));
+            return;
+        }
+
+        var options = angular.extend($scope.form, {
+            place_id: $stateParams.place_id,
+            value_id: $scope.value_id,
+        });
+
+        Job.contactForm(options).success(function(data) {
+            $scope.closeContactModal();
+            Dialog.alert($translate.instant("Thank you"), $translate.instant(data.message), $translate.instant("OK"));
+        }).finally(function() {
         });
     };
 
@@ -250,6 +305,11 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.goHome = function(item) {
         $state.go("job-list", {value_id: $scope.value_id});
     };
+
+    $scope.share =  function() {
+        Social.share();
+    };
+
 
     $scope.loadContent();
 

@@ -47,6 +47,12 @@ $schemas['job_place'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'email' => array(
+        'type' => 'varchar(255)',
+        'is_null' => true,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'location' => array(
         'type' => 'varchar(512)',
         'charset' => 'utf8',
@@ -72,6 +78,12 @@ $schemas['job_place'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'icon' => array(
+        'type' => 'varchar(255)',
+        'is_null' => true,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'banner' => array(
         'type' => 'varchar(255)',
         'is_null' => true,
@@ -82,6 +94,10 @@ $schemas['job_place'] = array(
         'type' => 'text',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
+    ),
+    'views' => array(
+        'type' => 'int(11) unsigned',
+        'default' => '0',
     ),
     'is_active' => array(
         'type' => 'tinyint(1) unsigned',

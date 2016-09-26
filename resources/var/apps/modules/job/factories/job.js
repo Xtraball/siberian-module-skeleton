@@ -55,5 +55,20 @@ App.factory('Job', function($rootScope, $http, httpCache, Url, CACHE_EVENTS, Cus
         });
     };
 
+    factory.contactForm = function(values) {
+
+        if(!this.value_id) {
+            return;
+        }
+
+        return $http({
+            method: 'POST',
+            url: Url.get("job/mobile_list/contactform"),
+            data: values,
+            cache: false,
+            responseType:'json'
+        });
+    };
+
     return factory;
 });

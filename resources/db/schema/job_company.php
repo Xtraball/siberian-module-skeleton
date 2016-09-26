@@ -26,6 +26,11 @@ $schemas['job_company'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
+    'website' => array(
+        'type' => 'varchar(255)',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ),
     'location' => array(
         'type' => 'varchar(512)',
         'charset' => 'utf8',
@@ -51,8 +56,8 @@ $schemas['job_company'] = array(
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
-    'password' => array(
-        'type' => 'varchar(255)',
+    'administrators' => array(
+        'type' => 'varchar(1024)',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),
@@ -67,6 +72,17 @@ $schemas['job_company'] = array(
         'is_null' => true,
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
+    ),
+    'display_contact' => array(
+        'type' => 'enum(\'global\',\'hidden\',\'contactform\',\'email\',\'both\')',
+        'is_null' => false,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'default' => 'global',
+    ),
+    'views' => array(
+        'type' => 'int(11) unsigned',
+        'default' => '0',
     ),
     'is_active' => array(
         'type' => 'tinyint(1) unsigned',

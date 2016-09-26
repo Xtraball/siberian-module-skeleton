@@ -81,8 +81,19 @@ class Job_PlaceController extends Application_Controller_Default {
                 ))
             ;
 
-            $path_banner = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values['banner']);
+            $path_banner = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values['banner'], $values['banner']);
             $place->setData("banner", $path_banner);
+
+
+            if($values["icon"] == "_delete_") {
+                $place->setData("icon", "");
+            } else if(file_exists(Core_Model_Directory::getBasePathTo("images/application".$values["icon"]))) {
+                # Nothing changed, skip
+            } else {
+                $path_icon = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values["icon"]);
+                $place->setData("icon", $path_icon);
+            }
+
 
             /** Geocoding */
             if(!empty($values["location"])) {

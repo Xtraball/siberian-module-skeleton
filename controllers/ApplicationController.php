@@ -24,6 +24,14 @@ class Job_ApplicationController extends Application_Controller_Default {
                 $job->setDisplayPlaceIcon($values["display_place_icon"]);
             }
 
+            if(isset($values["display_income"])) {
+                $job->setDisplayIncome($values["display_income"]);
+            }
+
+            if(isset($values["display_contact"])) {
+                $job->setDisplayContact($values["display_contact"]);
+            }
+
             if(isset($values["title_company"])) {
                 $job->setTitleCompany($values["title_company"]);
             }

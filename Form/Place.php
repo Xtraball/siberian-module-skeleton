@@ -20,7 +20,8 @@ class Job_Form_Place extends Siberian_Form_Abstract {
 
         $this->addSimpleHidden("place_id");
 
-        $logo = $this->addSimpleImage("banner", __("Header"), __("Import a header image"), array("width" => 1200, "height" => 400, "required" => true));
+        $icon = $this->addSimpleImage("icon", __("Icon"), __("Import an icon image"), array("width" => 300, "height" => 300));
+        $banner = $this->addSimpleImage("banner", __("Header"), __("Import a header image"), array("width" => 1200, "height" => 400, "required" => true));
 
         $name = $this->addSimpleText("name", __("Name"));
         $name
@@ -34,6 +35,12 @@ class Job_Form_Place extends Siberian_Form_Abstract {
             ->setRichtext()
         ;
 
+        $email = $this->addSimpleText("email", __("E-mail"));
+        $email
+            ->addValidator("EmailAddress")
+            ->setRequired(true)
+            ->setAttrib("autocomplete", "job-place-email")
+        ;
 
         $address = $this->addSimpleText("location", __("Address"));
         $address
@@ -71,7 +78,18 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         ;
     }
 
+    /**
+     * @param $place_id
+     */
     public function setPlaceId($place_id) {
         $this->getElement("place_id")->setValue($place_id)->setRequired(true);
+    }
+
+    /**
+     * Remove income fields
+     */
+    public function removeIncome() {
+        $this->removeElement("income_from");
+        $this->removeElement("income_to");
     }
 }

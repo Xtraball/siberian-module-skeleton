@@ -52,7 +52,7 @@ class Job_Model_Db_Table_Place extends Core_Model_Db_Table {
             if(isset($values["radius"]) && $values["radius"] > 0) {
                 $select->having("distance < ?", $values["radius"]*1000);
             }
-            $select->order("distance ASC");
+            $select->order(array("distance ASC", "time DESC"));
         }
 
         if($more_search) {

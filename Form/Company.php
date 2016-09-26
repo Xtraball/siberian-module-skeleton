@@ -31,6 +31,7 @@ class Job_Form_Company extends Siberian_Form_Abstract {
             ->setRichtext()
         ;
 
+        $website = $this->addSimpleText("website", __("Website"));
 
         $email = $this->addSimpleText("email", __("E-mail"));
         $email
@@ -39,13 +40,17 @@ class Job_Form_Company extends Siberian_Form_Abstract {
             ->setAttrib("autocomplete", "job-company-email")
         ;
 
-        /** Disabling password until APi is ready
-        $fake_hidden = $this->addSimplePassword("__fake_password__");
-        $fake_hidden->setAttrib("style", "display: none;");
+        $customer = new Customer_Model_Customer();
+        $customers = $customer->findAll(array(
+            "app_id = ?" => Application_Model_Application::getApplication()->getId(),
+        ));
 
-        $password = $this->addSimplePassword("_password_", __("Password"));
-        $password->setDescription(__("By setting up a password, this company can use the API to manage it's account & places.<br />Leave blank to disable the API access."));
-        */
+        $_values = array();
+        foreach($customers as $customer) {
+            $_values[$customer->getId()] = sprintf("%s %s <%s>", $customer->getFirstname(), $customer->getLastname(), $customer->getEmail());
+        }
+
+        $admins = $this->addSimpleMultiSelect("administrators", __("Administrators"), $_values);
 
         $address = $this->addSimpleText("location", __("Address"));
         $address
@@ -56,6 +61,16 @@ class Job_Form_Company extends Siberian_Form_Abstract {
         
         $logo = $this->addSimpleImage("logo", __("Logo"), __("Import a logo"), array("width" => 500, "height" => 500, "required" => true));
         $header = $this->addSimpleImage("header", __("Header"), __("Import a header"), array("width" => 1200, "height" => 400, "required" => true));
+
+        $options = array(
+            "global" => __("Use global configuration"),
+            "hidden" => __("Hidden"),
+            "contactform" => __("Contact form"),
+            "email" => __("Email"),
+            "both" => __("Email & Contact form"),
+        );
+
+        $display_contact = $this->addSimpleSelect("display_contact", __("Display contact"), $options);
 
         $job_id = $this->addSimpleHidden("job_id");
         $job_id

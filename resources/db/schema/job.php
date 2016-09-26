@@ -24,14 +24,25 @@ $schemas['job'] = array(
         'type' => 'tinyint(1) unsigned',
         'default' => '0',
     ),
+    'display_income' => array(
+        'type' => 'tinyint(1) unsigned',
+        'default' => '1',
+    ),
+    'display_contact' => array(
+        'type' => 'enum(\'hidden\',\'contactform\',\'email\',\'both\')',
+        'is_null' => false,
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'default' => 'contactform',
+    ),
     'title_company' => array(
-        'type' => 'varchar(128)',
+        'type' => 'varchar(255)',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
         'default' => 'Company',
     ),
     'title_place' => array(
-        'type' => 'varchar(128)',
+        'type' => 'varchar(255)',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
         'default' => 'Place',

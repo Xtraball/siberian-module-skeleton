@@ -12,11 +12,14 @@ class Job_CompanyController extends Application_Controller_Default {
         $company->find($company_id);
         if($company->getId()) {
             $form = new Job_Form_Company();
+
             $form->populate($company->getData());
             $form->setValueId($this->getCurrentOptionValue()->getId());
             $form->removeNav("job-company-nav");
             $form->addNav("job-company-edit-nav", "Save", false);
             $form->setCompanyId($company->getId());
+
+            $form->getElement("administrators")->setValue(explode(",", $company->getData("administrators")));
 
             $html = array(
                 "success" => 1,
@@ -53,6 +56,8 @@ class Job_CompanyController extends Application_Controller_Default {
             $company->setData("logo", $path_logo);
             $company->setData("header", $path_header);
             $company->setData("is_active", true);
+
+            $company->setData("administrators", implode(",", $company->getData("administrators")));
 
             /** Password */
             if(!empty($values["password"]) && ($values["password"] != "_remove_")) {

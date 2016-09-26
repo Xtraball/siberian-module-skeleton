@@ -121,6 +121,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                 $options = array(
                     "display_search" => filter_var($job->getDisplaySearch(), FILTER_VALIDATE_BOOLEAN),
                     "display_place_icon" => filter_var($job->getDisplayPlaceIcon(), FILTER_VALIDATE_BOOLEAN),
+                    "display_income" => filter_var($job->getDisplayIncome(), FILTER_VALIDATE_BOOLEAN),
                     "title_company" => __($job->getTitleCompany()),
                     "title_place" => __($job->getTitlePlace()),
                 );
@@ -154,7 +155,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                     "locality" => $locality,
                     "more" => (count($total) > $count),
                     "page_title" => $this->getCurrentOptionValue()->getTabbarName(),
-                    "social_sharing_active" => true,
+                    "social_sharing_active" => $this->getCurrentOptionValue()->getSocialSharingIsActive(),
                 );
 
             } catch(Exception $e) {
@@ -184,15 +185,34 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                         $company = new Job_Model_Company();
                         $company->find($place->getCompanyId());
 
+                        $job = new Job_Model_Job();
+                        $job->find($company->getJobId());
+
+                        $place->setViews($place->getViews()+1)->save();
+
+                        $display_contact = ($company->getDisplayContact() != "global") ? $company->getDisplayContact() : $job->getDisplayContact();
+
+                        /** is administrator */
+                        $is_admin = false;
+                        if($this->getSession()->getCustomerId()) {
+                            $administrators = explode(",", $company->getAdministrators());
+                            if(in_array($this->getSession()->getCustomerId(), $administrators)) {
+                                $is_admin = true;
+                            }
+                        }
+
                         $place = array(
                             "id" => $place->getId(),
                             "title" => $place->getName(),
                             "subtitle" => $place->getDescription(),
+                            "email" => $place->getEmail(),
                             "banner" => ($place->getBanner()) ? $this->getRequest()->getBaseUrl()."/images/application".$place->getBanner() : null,
                             "location" => $place->getLocation(),
                             "income_from" => $place->getIncomeFrom(),
                             "income_to" => $place->getIncomeTo(),
                             "company_id" => $place->getCompanyId(),
+                            "display_contact" => $display_contact,
+                            "views" => $place->getViews(),
                             "company" => array(
                                 "title" => $company->getName(),
                                 "subtitle" => strip_tags($company->getDescription()),
@@ -206,6 +226,8 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "success" => 1,
                             "place" => $place,
                             "page_title" => $this->getCurrentOptionValue()->getTabbarName(),
+                            "is_admin" => $is_admin,
+                            "social_sharing_active" => $this->getCurrentOptionValue()->getSocialSharingIsActive(),
                         );
 
                     }
@@ -245,12 +267,24 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "is_active = ?" => 1,
                         ));
 
+                        $company->setViews($company->getViews()+1)->save();
+
+                        /** is administrator */
+                        $is_admin = false;
+                        if($this->getSession()->getCustomerId()) {
+                            $administrators = explode(",", $company->getAdministrators());
+                            if(in_array($this->getSession()->getCustomerId(), $administrators)) {
+                                $is_admin = true;
+                            }
+                        }
+
                         $_places = array();
                         foreach($places as $place) {
                             $_places[] = array(
                                 "id" => $place->getId(),
                                 "title" => $place->getName(),
                                 "subtitle" => strip_tags($place->getDescription()),
+                                "views" => $place->getViews(),
                                 "banner" => ($place->getBanner()) ? $this->getRequest()->getBaseUrl()."/images/application".$place->getBanner() : null,
                                 "location" => $place->getLocation(),
                                 "income_from" => $place->getIncomeFrom(),
@@ -272,6 +306,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                         $html = array(
                             "success" => 1,
                             "company" => $company,
+                            "is_admin" => $is_admin,
                             "page_title" => $this->getCurrentOptionValue()->getTabbarName(),
                         );
 
@@ -293,4 +328,80 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
 
     }
 
+
+    public function contactformAction() {
+        $request = $this->getRequest();
+
+        if($values = Siberian_Json::decode($request->getRawBody())) {
+
+            try {
+
+                if (($value_id = $values['value_id']) && ($place_id = $values['place_id'])) {
+
+                    $place = new Job_Model_Place();
+                    $place->find($place_id);
+
+                    if($place->getId()) {
+                        $place_email = $place->getEmail();
+                        $place_title = $place->getName();
+
+                        $fullname   = $values["fullname"];
+                        $email      = $values["email"];
+                        $message    = $values["message"];
+
+                        $layout = Zend_Controller_Action_HelperBroker::getStaticHelper('layout')->getLayoutInstance()->loadEmail('job', 'contact_form');
+                        $layout
+                            ->getPartial('content_email')
+                            ->setPlaceTitle($place_title)
+                            ->setFullname($fullname)
+                            ->setEmail($email)
+                            ->setMessage($message)
+                        ;
+
+                        $content = $layout->render();
+
+                        $sender = $email;
+                        $support_name = $fullname;
+
+                        if($sender AND $support_name) {
+                            /** Mail to place */
+                            $mail = new Zend_Mail('UTF-8');
+                            $mail->setBodyHtml($content);
+                            $mail->setFrom($sender, $support_name);
+                            $mail->addTo($place_email);
+                            $mail->setSubject(__("New contact for: %s", $place_title));
+                            $mail->send();
+
+                            $html = array(
+                                "success" => 1,
+                                "message" => __("Email successfully sent."),
+                            );
+
+                        }
+                    }
+                }
+
+            } catch(Exception $e) {
+                $html = array(
+                    "error" => 1,
+                    "message" => $e->getMessage()
+                );
+            }
+        } else {
+            $html = array(
+                "error" => 1,
+                "message" => __("#567-03: Missing value_id or place_id.")
+            );
+        }
+
+        if(empty($html)) {
+            $html = array(
+                "error" => 1,
+                "message" => __("#567-04: An error occured.")
+            );
+        }
+
+        $this->_sendHtml($html);
+
+    }
 }

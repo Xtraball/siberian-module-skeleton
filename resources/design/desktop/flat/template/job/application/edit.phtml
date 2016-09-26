@@ -20,7 +20,7 @@ $form_company->setValueId($option_value->getId());
 
 $company_options = array();
 foreach($companies as $_company) {
-    $company_options[$_company->getId()] = $_company->getName();
+    $company_options[$_company->getId()] = $_company->getName()." - ".$_company->getLocation();
 }
 
 # Toggle company
@@ -40,12 +40,16 @@ if(!empty($company_options)) {
 }
 $form_place->setValueId($option_value->getId());
 
+if(!$job->getDisplayIncome()) {
+    $form_place->removeIncome();
+}
+
 $category = new Job_Model_Category();
 $categories = $category->findAll(array(
     "job_id" => $job->getId(),
     "is_active" => true,
 ));
-$category_options = array();
+$category_options = array("" => __("None"));
 foreach($categories as $_category) {
     $category_options[$_category->getId()] = $_category->getName();
 }
@@ -165,7 +169,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                                 <?php foreach($companies as $company) : ?>
                                     <tr id="company_manage_element_<?php echo $company->getId(); ?>" class="company-manage-element">
                                         <td><?php echo $company->getName(); ?></td>
-                                        <td><?php echo cut($company->getDescription(), 30); ?></td>
+                                        <td><?php echo cut(html_entity_decode($company->getDescription()), 60); ?></td>
                                         <td><?php echo $company->getEmail(); ?></td>
                                         <td class="toggle-action">
                                             <?php

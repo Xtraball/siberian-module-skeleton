@@ -26,3 +26,8 @@
 .toggle-action {
     padding-top: 7px !important;
 }
+
+table tbody td {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
