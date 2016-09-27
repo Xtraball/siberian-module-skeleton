@@ -42,7 +42,7 @@ $schemas['job_place'] = array(
         'collation' => 'utf8_unicode_ci',
     ),
     'description' => array(
-        'type' => 'varchar(255)',
+        'type' => 'text',
         'is_null' => true,
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',

@@ -58,6 +58,7 @@ $schemas['job_company'] = array(
     ),
     'administrators' => array(
         'type' => 'varchar(1024)',
+        'is_null' => true,
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
     ),

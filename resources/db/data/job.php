@@ -24,6 +24,7 @@ $data = array(
     "mobile_view_uri_parameter"     => "job_id",
     "only_once"                     => 0,
     "is_ajax"                       => 1,
+    "use_my_account"                => 1,
     "position"                      => 1000,
     "social_sharing_is_available"   => 1
 );
