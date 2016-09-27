@@ -7,6 +7,9 @@
         <button ng-click="goHome()" class="button button-clear header-item">
             <i class="icon ion-ios-list-outline"></i>
         </button>
+        <button ng-show="is_admin" ng-click="manageModal()" class="button button-clear header-item">
+            <i class="icon ion-ios-compose-outline"></i>
+        </button>
     </ion-nav-buttons>
 
     <ion-content sb-background-image>
@@ -31,6 +34,8 @@
                         <i class="icon ion-ios-location"></i>{{ company.location }}
                     </p>
                 </div>
+
+                <div ng-show="!company.is_active" class="job-inactive">{{ "inactive" | translate }}</div>
             </div>
 
 
@@ -41,8 +46,11 @@
 
             <div class="list" ng-show="company.places.length">
 
-                <div class="item item-divider item-divider-custom">
+                <div class="item item-divider item-divider-custom item-button-right">
                     <h2>{{ "Jobs" | translate }}</h2>
+                    <button ng-show="is_admin" ng-click="createModal()" class="button create-job">
+                        <i class="icon ion-ios-plus-outline"></i>
+                    </button>
                 </div>
 
                 <div ng-click="showPlace(place.id)" ng-repeat="place in company.places">
@@ -55,6 +63,7 @@
                             <span ng-if="place.company_name && place.location">, </span>
                             <span ng-if="place.location">{{ place.location }}</span>
                         </p>
+                        <div ng-show="!place.is_active" class="job-inactive">{{ "inactive" | translate }}</div>
                     </div>
                 </div>
             </div>

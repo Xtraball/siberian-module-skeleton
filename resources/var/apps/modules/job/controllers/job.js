@@ -38,6 +38,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.offset = null;
     $scope.time = null;
     $scope.modal = null;
+    $scope.admin_modal = null;
 
     $scope.distance_range = new Array(1, 5, 10, 20, 50, 75, 100, 150, 200, 500, 1000);
     $scope.Math = window.Math;
@@ -116,6 +117,20 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         $scope.modal.hide();
     };
 
+    $scope.adminModal = function() {
+        $ionicModal.fromTemplateUrl('modules/job/templates/l1/admin-modal.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.admin_modal = modal;
+            $scope.admin_modal.show();
+        });
+    };
+
+    $scope.closeAdminModal = function() {
+        $scope.admin_modal.hide();
+    };
+
     $scope.loadContent = function(type) {
 
         $scope.filters.time = 0;
@@ -132,6 +147,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
             $scope.filters.locality = data.locality;
             $scope.page_title = data.page_title;
             $scope.can_load_older_places = data.more;
+            Job.admin_companies = $scope.admin_companies = data.admin_companies;
 
             $scope.social_sharing_active = !!(data.social_sharing_is_active == 1 && $scope.collection.length > 0 && !Application.is_webview);
 
@@ -205,6 +221,11 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         });
     };
 
+    $scope.showCompany = function(company_id) {
+        $scope.closeAdminModal();
+        $state.go("company-view", {value_id: $scope.value_id, company_id: company_id});
+    };
+
     $scope.showItem = function(item) {
         $state.go("job-view", {value_id: $scope.value_id, place_id: item.id});
     };
@@ -229,6 +250,8 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.is_loading = true;
     $scope.value_id = Job.value_id = $stateParams.value_id;
     $scope.modal = null;
+    $scope.manage_modal = null;
+    $scope.is_admin = false;
 
     $scope.form = {
         fullname: "",
@@ -240,8 +263,10 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
         Job.find($stateParams.place_id).success(function(data) {
 
-            $scope.place = data.place;
+            $scope.place_edit = $scope.place = data.place;
             $scope.page_title = data.page_title;
+            $scope.is_admin = data.is_admin;
+
             $scope.social_sharing_active = !!(data.social_sharing_is_active == 1 && !Application.is_webview);
 
         }).finally(function() {
@@ -288,14 +313,47 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
 
         var options = angular.extend($scope.form, {
             place_id: $stateParams.place_id,
-            value_id: $scope.value_id,
+            value_id: $scope.value_id
         });
 
         Job.contactForm(options).success(function(data) {
             $scope.closeContactModal();
-            Dialog.alert($translate.instant("Thank you"), $translate.instant(data.message), $translate.instant("OK"));
-        }).finally(function() {
+                Dialog.alert($translate.instant("Thank you"), $translate.instant(data.message), $translate.instant("OK"));
+            }).finally(function() {
         });
+    };
+
+    $scope.submitManage = function() {
+        if($scope.place_edit.title == "" || $scope.place_edit.subtitle == "") {
+            Dialog.alert($translate.instant("Form error"), $translate.instant("All fields are required !"), $translate.instant("OK"));
+            return;
+        }
+
+        var options = angular.extend($scope.place_edit, {
+            place_id: $stateParams.place_id,
+            value_id: $scope.value_id
+        });
+
+        Job.editPlace(options).success(function(data) {
+            $scope.closeManageModal();
+            Dialog.alert($translate.instant("Thank you"), $translate.instant(data.message), $translate.instant("OK"));
+
+            $scope.loadContent();
+        }).finally(function() {});
+    };
+
+    $scope.manageModal = function() {
+        $ionicModal.fromTemplateUrl('modules/job/templates/l1/manage-place.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.manage_modal = modal;
+            $scope.manage_modal.show();
+        });
+    };
+
+    $scope.closeManageModal = function() {
+        $scope.manage_modal.hide();
     };
 
     $scope.showCompany = function(company_id) {
@@ -307,13 +365,12 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     };
 
     $scope.share =  function() {
-        Social.share();
+        Social.share($translate.instant("Hi, I just found this job: $1 in the App $2").replace("$1", $scope.place.title).replace("$2", Application.app_name));
     };
-
 
     $scope.loadContent();
 
-}).controller('CompanyViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $ionicScrollDelegate, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job, Url, AUTH_EVENTS, CACHE_EVENTS) {
+}).controller('CompanyViewController', function($cordovaSocialSharing, $ionicHistory, $ionicModal, $ionicPopup, $ionicScrollDelegate, $rootScope, $scope, $state, $stateParams, $timeout, $translate, $window, Application, Customer, Dialog, Job) {
 
     $scope.$on("connectionStateChange", function(event, args) {
         if(args.isOnline == true) {
@@ -324,13 +381,30 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
     $scope.social_sharing_active = false;
     $scope.is_loading = true;
     $scope.value_id = Job.value_id = $stateParams.value_id;
+    $scope.is_admin = false;
+    $scope.manage_modal = null;
+    $scope.create_modal = null;
+    $scope.place_create = {
+        name: null,
+        description: null,
+        location: null,
+        email: null,
+        contract_type: null,
+        income_from: null,
+        income_to: null,
+        category_id: null,
+        keywords: null,
+        is_active: null
+    };
 
     $scope.loadContent = function() {
 
         Job.findCompany($stateParams.company_id).success(function(data) {
 
-            $scope.company = data.company;
+            $scope.company_edit = $scope.company = data.company;
+            $scope.categories = data.categories;
             $scope.page_title = data.page_title;
+            $scope.is_admin = data.is_admin;
 
             $scope.social_sharing_active = !!(data.social_sharing_is_active == 1 && !Application.is_webview);
 
@@ -339,6 +413,79 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
             $scope.is_loading = false;
             $ionicScrollDelegate.scrollTop();
         });
+    };
+
+    $scope.submitManage = function() {
+        if($scope.company_edit.title == "" || $scope.company_edit.location == "" || $scope.company_edit.email == "") {
+            Dialog.alert($translate.instant("Form error"), $translate.instant("Required fields are missing !"), $translate.instant("OK"));
+            return;
+        }
+
+        var options = angular.extend($scope.company_edit, {
+            company_id: $stateParams.company_id,
+            value_id: $scope.value_id
+        });
+
+        Job.editCompany(options).success(function(data) {
+            $scope.closeManageModal();
+            Dialog.alert($translate.instant("Thank you"), $translate.instant(data.message), $translate.instant("OK"));
+
+            $scope.loadContent();
+        }).finally(function() {});
+    };
+
+    $scope.manageModal = function() {
+        $ionicModal.fromTemplateUrl('modules/job/templates/l1/manage-company.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.manage_modal = modal;
+            $scope.manage_modal.show();
+        });
+    };
+
+    $scope.closeManageModal = function() {
+        $scope.manage_modal.hide();
+    };
+
+    $scope.submitCreate = function() {
+        var options = angular.extend($scope.place_create, {
+            company_id: $stateParams.company_id,
+            value_id: $scope.value_id
+        });
+
+        Job.createPlace(options).success(function(data) {
+            $scope.closeManageModal();
+            Dialog.alert($translate.instant("Thank you"), $translate.instant(data.message), $translate.instant("OK"));
+            $scope.loadContent();
+        }).finally(function() {});
+    };
+
+    $scope.createModal = function() {
+        $ionicModal.fromTemplateUrl('modules/job/templates/l1/create-place.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.create_modal = modal;
+            $scope.create_modal.show();
+        });
+    };
+
+    $scope.closeCreateModal = function() {
+        $scope.place_create = {
+            name: null,
+            description: null,
+            location: null,
+            email: null,
+            contract_type: null,
+            income_from: null,
+            income_to: null,
+            category_id: null,
+            keywords: null,
+            is_active: null
+        };
+
+        $scope.create_modal.hide();
     };
 
     $scope.showPlace = function(place_id) {

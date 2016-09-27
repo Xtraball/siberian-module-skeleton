@@ -18,6 +18,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                     $distance = $values["distance"];
                     $categories = $values["categories"];
                     $keywords = $values["keywords"];
+                    $position = filter_var($values["position"], FILTER_VALIDATE_BOOLEAN);
                     $more_search = filter_var($values["more_search"], FILTER_VALIDATE_BOOLEAN);
                     $limit = ($more_search) ? 100 : self::$pager;
 
@@ -72,6 +73,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "categories" => $categories,
                             "keywords" => $keywords,
                             "more_search" => $more_search,
+                            "position" => $position,
                         ),
                         "place.created_at DESC",
                         array(
@@ -92,6 +94,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "categories" => $categories,
                             "keywords" => $keywords,
                             "more_search" => $more_search,
+                            "position" => $position,
                         ),
                         "place.created_at DESC",
                         array(
@@ -142,6 +145,30 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                         "keywords" => $_category->getKeywords(),
                     );
                 }
+
+                $company = new Job_Model_Company();
+                $companies = $company->findAll(array(
+                    "job_id" => $job->getId(),
+                ));
+
+                $admin_companies = array();
+                $customer_id = $this->getSession()->getCustomerId();
+                if(!empty($customer_id)) {
+                    foreach($companies as $_company) {
+                        $administrators = explode(",", $_company->getAdministrators());
+                        if(in_array($customer_id, $administrators)) {
+                            $admin_companies[] = array(
+                                "id" => $_company->getId(),
+                                "title" => $_company->getName(),
+                                "subtitle" => strip_tags($_company->getDescription()),
+                                "location" => $_company->getLocation(),
+                                "is_active" => filter_var($_company->getIsActive(), FILTER_VALIDATE_BOOLEAN),
+                            );
+                        }
+                    }
+                }
+
+
                 $options = array(
                     "display_search" => filter_var($job->getDisplaySearch(), FILTER_VALIDATE_BOOLEAN),
                     "display_place_icon" => filter_var($job->getDisplayPlaceIcon(), FILTER_VALIDATE_BOOLEAN),
@@ -153,7 +180,8 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                     "options" => $options,
                     "categories" => $all_categories,
                     "locality" => $locality,
-                    "more" => (count($total) > $count),
+                    "admin_companies" => $admin_companies,
+                    "more" => (count($total) > ($count + count($places))),
                     "page_title" => $this->getCurrentOptionValue()->getTabbarName(),
                     "social_sharing_active" => $this->getCurrentOptionValue()->getSocialSharingIsActive(),
                 );
@@ -178,7 +206,6 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                     $place = new Job_Model_Place();
                     $place = $place->find(array(
                         "place_id" => $place_id,
-                        "is_active" => true,
                     ));
 
                     if($place) {
@@ -187,8 +214,6 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
 
                         $job = new Job_Model_Job();
                         $job->find($company->getJobId());
-
-                        $place->setViews($place->getViews()+1)->save();
 
                         $display_contact = ($company->getDisplayContact() != "global") ? $company->getDisplayContact() : $job->getDisplayContact();
 
@@ -201,18 +226,28 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             }
                         }
 
+                        if(!$is_admin) {
+                            $place->setViews($place->getViews()+1)->save();
+                        }
+
+                        if(!$is_admin && !$place->getIsActive()) {
+                            throw new Exception("This place is inactive.");
+                        }
+
                         $place = array(
                             "id" => $place->getId(),
                             "title" => $place->getName(),
                             "subtitle" => $place->getDescription(),
                             "email" => $place->getEmail(),
-                            "banner" => ($place->getBanner()) ? $this->getRequest()->getBaseUrl()."/images/application".$place->getBanner() : null,
+                            "banner" => ($place->getBanner()) ? $this->getRequest()->getBaseUrl()."/images/application".$place->getBanner() : $this->getRequest()->getBaseUrl()."/app/local/modules/Job/resources/media/default/job-header.png",
                             "location" => $place->getLocation(),
                             "income_from" => $place->getIncomeFrom(),
                             "income_to" => $place->getIncomeTo(),
                             "company_id" => $place->getCompanyId(),
+                            "keywords" => $place->getKeywords(),
                             "display_contact" => $display_contact,
                             "views" => $place->getViews(),
+                            "is_active" => filter_var($place->getIsActive(), FILTER_VALIDATE_BOOLEAN),
                             "company" => array(
                                 "title" => $company->getName(),
                                 "subtitle" => strip_tags($company->getDescription()),
@@ -256,18 +291,9 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                     $company = new Job_Model_Company();
                     $company = $company->find(array(
                         "company_id" => $company_id,
-                        "is_active" => true,
                     ));
 
                     if($company) {
-
-                        $place = new Job_Model_Place();
-                        $places = $place->findAll(array(
-                            "company_id = ?" => $company->getId(),
-                            "is_active = ?" => 1,
-                        ));
-
-                        $company->setViews($company->getViews()+1)->save();
 
                         /** is administrator */
                         $is_admin = false;
@@ -278,17 +304,53 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             }
                         }
 
+                        if(!$is_admin) {
+                            $company->setViews($company->getViews()+1)->save();
+                        }
+
+                        $place = new Job_Model_Place();
+
+                        if(!$is_admin) {
+                            $places = $place->findAll(array(
+                                "company_id = ?" => $company->getId(),
+                                "is_active = ?" => 1,
+                            ));
+                        } else {
+                            $places = $place->findAll(array(
+                                "company_id = ?" => $company->getId(),
+                            ));
+                        }
+
+
                         $_places = array();
                         foreach($places as $place) {
                             $_places[] = array(
                                 "id" => $place->getId(),
                                 "title" => $place->getName(),
-                                "subtitle" => strip_tags($place->getDescription()),
                                 "views" => $place->getViews(),
+                                "subtitle" => strip_tags($place->getDescription()),
                                 "banner" => ($place->getBanner()) ? $this->getRequest()->getBaseUrl()."/images/application".$place->getBanner() : null,
                                 "location" => $place->getLocation(),
                                 "income_from" => $place->getIncomeFrom(),
                                 "income_to" => $place->getIncomeTo(),
+                                "is_active" => filter_var($place->getIsActive(), FILTER_VALIDATE_BOOLEAN),
+                            );
+                        }
+
+                        $category = new Job_Model_Category();
+                        $categories = $category->findAll(array(
+                            "is_active" => true,
+                            "job_id" => $company->getJobId(),
+                        ));
+
+                        $all_categories[] = array(
+                            "id" => "",
+                            "title" => __("None")
+                        );
+                        foreach($categories as $_category) {
+                            $all_categories[] = array(
+                                "id" => $_category->getId(),
+                                "title" => $_category->getName(),
                             );
                         }
 
@@ -300,12 +362,16 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "header" => ($company->getHeader()) ? $this->getRequest()->getBaseUrl()."/images/application".$company->getHeader() : null,
                             "location" => $company->getLocation(),
                             "employee_count" => $company->getEmployeeCount(),
+                            "website" => $company->getWebsite(),
+                            "email" => $company->getEmail(),
+                            "views" => $company->getViews(),
                             "places" => $_places,
                         );
 
                         $html = array(
                             "success" => 1,
                             "company" => $company,
+                            "categories" => $all_categories,
                             "is_admin" => $is_admin,
                             "page_title" => $this->getCurrentOptionValue()->getTabbarName(),
                         );
@@ -372,6 +438,11 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             $mail->setSubject(__("New contact for: %s", $place_title));
                             $mail->send();
 
+                            $place_contact = new Job_Model_PlaceContact();
+                            $place_contact->addData($values);
+                            $place_contact->setData("customer_id", $this->getSession()->getCustomerId());
+                            $place_contact->save();
+
                             $html = array(
                                 "success" => 1,
                                 "message" => __("Email successfully sent."),
@@ -398,6 +469,208 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
             $html = array(
                 "error" => 1,
                 "message" => __("#567-04: An error occured.")
+            );
+        }
+
+        $this->_sendHtml($html);
+
+    }
+
+    public function editplaceAction() {
+        $request = $this->getRequest();
+
+        if($values = Siberian_Json::decode($request->getRawBody())) {
+
+            try {
+
+                if (($value_id = $values['value_id']) && ($place_id = $values['place_id'])) {
+
+                    $place = new Job_Model_Place();
+                    $place->find($place_id);
+
+                    if($place->getId()) {
+
+                        $company = new Job_Model_Company();
+                        $company = $company->find($place->getCompanyId());
+
+                        /** is administrator */
+                        $is_admin = false;
+                        if($this->getSession()->getCustomerId()) {
+                            $administrators = explode(",", $company->getAdministrators());
+                            if(in_array($this->getSession()->getCustomerId(), $administrators)) {
+                                $is_admin = true;
+                            }
+                        }
+
+                        if(!$is_admin) {
+                            throw new Exception("You are not allowed to edit this Place");
+                        }
+
+                        $place->setName($values["title"]);
+                        $place->setEmail($values["email"]);
+                        $place->setKeywords($values["keywords"]);
+                        $place->setIsActive(filter_var($values["is_active"], FILTER_VALIDATE_BOOLEAN));
+
+                        /** Geocoding */
+                        if(!empty($values["location"])) {
+                            $coordinates = Siberian_Google_Geocoding::getLatLng(array("address" => $values["location"]));
+                            $place->setData("latitude", $coordinates[0]);
+                            $place->setData("longitude", $coordinates[1]);
+                            $place->setLocation($values["location"]);
+                        }
+
+                        $place->save();
+
+                        $html = array(
+                            "success" => 1,
+                            "message" => __("Place saved.")
+                        );
+
+                    }
+                }
+
+            } catch(Exception $e) {
+                $html = array(
+                    "error" => 1,
+                    "message" => $e->getMessage()
+                );
+            }
+        } else {
+            $html = array(
+                "error" => 1,
+                "message" => __("#567-07: Missing value_id or place_id.")
+            );
+        }
+
+        $this->_sendHtml($html);
+
+    }
+
+    public function createplaceAction() {
+        $request = $this->getRequest();
+        $values = Siberian_Json::decode($request->getRawBody());
+
+        $form = new Job_Form_Place();
+
+        /** Remove icon element */
+        $form->getElement("banner")->setRequired(false);
+
+        if($form->isValid($values)) {
+
+            try {
+
+                $company = new Job_Model_Company();
+                $company->find($values["company_id"]);
+
+                /** is administrator */
+                $is_admin = false;
+                if($this->getSession()->getCustomerId()) {
+                    $administrators = explode(",", $company->getAdministrators());
+                    if(in_array($this->getSession()->getCustomerId(), $administrators)) {
+                        $is_admin = true;
+                    }
+                }
+
+                if(!$is_admin) {
+                    throw new Exception("You are not allowed to create a place for this company");
+                }
+
+                $place = new Job_Model_Place();
+                $place->setData($values);
+
+                $place->setData("description", nl2br($values["description"]));
+
+                /** Geocoding */
+                if(!empty($values["location"])) {
+                    $coordinates = Siberian_Google_Geocoding::getLatLng(array("address" => $values["location"]));
+                    $place->setData("latitude", $coordinates[0]);
+                    $place->setData("longitude", $coordinates[1]);
+                }
+
+                $place->save();
+
+                $html = array(
+                    "success" => 1,
+                    "message" => __("The place is successfully created.")
+                );
+
+            } catch(Exception $e) {
+                $html = array(
+                    "error" => 1,
+                    "message" => $e->getMessage()
+                );
+            }
+        } else {
+            $html = array(
+                "error" => 1,
+                "message" => __("#567-07: Missing value_id or place_id.")
+            );
+        }
+
+        $this->_sendHtml($html);
+    }
+
+    public function editcompanyAction() {
+        $request = $this->getRequest();
+
+        if($values = Siberian_Json::decode($request->getRawBody())) {
+
+            try {
+
+                if (($value_id = $values['value_id']) && ($company_id = $values['company_id'])) {
+
+                    $company = new Job_Model_Company();
+                    $company->find($company_id);
+
+                    if($company->getId()) {
+
+                        /** is administrator */
+                        $is_admin = false;
+                        if($this->getSession()->getCustomerId()) {
+                            $administrators = explode(",", $company->getAdministrators());
+                            if(in_array($this->getSession()->getCustomerId(), $administrators)) {
+                                $is_admin = true;
+                            }
+                        }
+
+                        if(!$is_admin) {
+                            throw new Exception("You are not allowed to edit this Company");
+                        }
+
+                        $company->setName($values["title"]);
+                        $company->setWebsite($values["website"]);
+                        $company->setEmail($values["email"]);
+                        $company->setEmployeeCount($values["employee_count"]);
+                        $company->setDisplayContact($values["display_contact"]);
+
+                        /** Geocoding */
+                        if(!empty($values["location"])) {
+                            $coordinates = Siberian_Google_Geocoding::getLatLng(array("address" => $values["location"]));
+                            $company->setData("latitude", $coordinates[0]);
+                            $company->setData("longitude", $coordinates[1]);
+                            $company->setLocation($values["location"]);
+                        }
+
+                        $company->save();
+
+                        $html = array(
+                            "success" => 1,
+                            "message" => __("Company saved.")
+                        );
+
+                    }
+                }
+
+            } catch(Exception $e) {
+                $html = array(
+                    "error" => 1,
+                    "message" => $e->getMessage()
+                );
+            }
+        } else {
+            $html = array(
+                "error" => 1,
+                "message" => __("#567-07: Missing value_id or company_id.")
             );
         }
 

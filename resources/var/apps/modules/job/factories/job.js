@@ -4,6 +4,7 @@ App.factory('Job', function($rootScope, $http, httpCache, Url, CACHE_EVENTS, Cus
     var factory = {};
 
     factory.value_id = null;
+    factory.admin_companies = null;
 
     factory.findAll = function(options) {
 
@@ -64,6 +65,51 @@ App.factory('Job', function($rootScope, $http, httpCache, Url, CACHE_EVENTS, Cus
         return $http({
             method: 'POST',
             url: Url.get("job/mobile_list/contactform"),
+            data: values,
+            cache: false,
+            responseType:'json'
+        });
+    };
+
+    factory.editPlace = function(values) {
+
+        if(!this.value_id) {
+            return;
+        }
+
+        return $http({
+            method: 'POST',
+            url: Url.get("job/mobile_list/editplace"),
+            data: values,
+            cache: false,
+            responseType:'json'
+        });
+    };
+
+    factory.createPlace = function(values) {
+
+        if(!this.value_id) {
+            return;
+        }
+
+        return $http({
+            method: 'POST',
+            url: Url.get("job/mobile_list/createplace"),
+            data: values,
+            cache: false,
+            responseType:'json'
+        });
+    };
+
+    factory.editCompany = function(values) {
+
+        if(!this.value_id) {
+            return;
+        }
+
+        return $http({
+            method: 'POST',
+            url: Url.get("job/mobile_list/editcompany"),
             data: values,
             cache: false,
             responseType:'json'

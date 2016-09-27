@@ -30,7 +30,7 @@ class Job_Model_Db_Table_Place extends Core_Model_Db_Table {
             ->limit($params["limit"])
         ;
 
-        if(isset($values["time"]) && ($values["time"] > 0) && !$values["search_by_distance"]) {
+        if(isset($values["time"]) && ($values["time"] > 0) && (!$values["search_by_distance"] || !$values["position"])) {
             if($values["pull_to_refresh"]) {
                 $select->where("UNIX_TIMESTAMP(place.created_at) > ?", $values["time"]);
             } else {
@@ -47,12 +47,16 @@ class Job_Model_Db_Table_Place extends Core_Model_Db_Table {
             }
         }
 
-        if($search_by_distance) {
+        if($search_by_distance && $values["position"]) {
             /** Distance */
             if(isset($values["radius"]) && $values["radius"] > 0) {
                 $select->having("distance < ?", $values["radius"]*1000);
             }
             $select->order(array("distance ASC", "time DESC"));
+        }
+
+        if(!$values["position"]) {
+            $select->order(array("time DESC"));
         }
 
         if($more_search) {

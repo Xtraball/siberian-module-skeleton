@@ -2,6 +2,9 @@
     <ion-nav-title>{{ page_title }}</ion-nav-title>
     <ion-nav-buttons side="secondary">
         <div sb-tooltip collection="tooltip.collection" current-item="tooltip.current_item" button-label="tooltip.button_label" on-item-clicked="showTooltip(object)" ng-if="tooltip"></div>
+        <button ng-show="admin_companies.length" ng-click="adminModal()" class="button button-clear header-item">
+            <i class="icon ion-ios-settings"></i>
+        </button>
     </ion-nav-buttons>
 
     <div class="bar bar-subheader" ng-show="options.display_search">
@@ -14,7 +17,7 @@
             <div class="item-input-wrapper place" ng-click="filterModal();">
                 <i class="icon ion-ios-location-outline"></i>
                 <span ng-show="filters.locality">{{ filters.locality }}</span>
-                <span ng-show="!filters.locality">{{ "Place" | translate }}</span>
+                <span ng-show="!filters.locality">{{ "Locality" | translate }}</span>
             </div>
 
             <div class="item-input-wrapper more" ng-click="filterModal();">
@@ -28,7 +31,7 @@
         <ion-refresher
                 pulling-text="Pull to refresh..."
                 on-refresh="pullToRefresh()"
-                ng-if="!filters.more_search">
+                ng-hide="filters.more_search">
         </ion-refresher>
 
         <div ng-include="template_header"></div>
@@ -59,7 +62,7 @@
             </div>
         </div>
 
-        <ion-infinite-scroll ng-if="can_load_older_places && !filters.more_search"
+        <ion-infinite-scroll ng-show="can_load_older_places && !filters.more_search"
                              on-infinite="loadMore()"
                              immediate-check="false"
                              distance="10%"
