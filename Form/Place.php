@@ -12,7 +12,7 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         $this
             ->setAction(__path("/job/place/editpost"))
             ->setAttrib("id", "form-place")
-            ->addNav("job-place-nav");
+            ->addNav("job-place-nav")
         ;
 
         /** Bind as a create form */

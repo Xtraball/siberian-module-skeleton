@@ -105,7 +105,7 @@ $delete_category_form = new Job_Form_Category_Delete();
         </li>
         <?php if($companies->count() > 0): ?>
         <li role="presentation">
-            <a href="#places" aria-controls="places" role="tab" data-toggle="tab"><?php echo __("Places") ?></a>
+            <a href="#places" aria-controls="places" role="tab" data-toggle="tab"><?php echo __("Positions") ?></a>
         </li>
         <?php endif; ?>
         <li role="presentation">
@@ -159,7 +159,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                             </button>
                         </h3>
                         <div class="container-fluid first-row-feature feature-manage-items">
-                            <table class="table content-white-bkg">
+                            <table class="table content-white-bkg sb-pager">
                                 <thead>
                                 <tr class="border-blue">
                                     <th style="width:26%;"><?php echo __("Name"); ?></th>
@@ -172,7 +172,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                                 </thead>
                                 <tbody>
                                 <?php foreach($companies as $company) : ?>
-                                    <tr id="company_manage_element_<?php echo $company->getId(); ?>" class="company-manage-element">
+                                    <tr id="company_manage_element_<?php echo $company->getId(); ?>" class="company-manage-element sb-pager">
                                         <td><?php echo $company->getName(); ?></td>
                                         <td><?php echo cut(html_entity_decode($company->getDescription()), 60); ?></td>
                                         <td><?php echo $company->getEmail(); ?></td>
@@ -218,7 +218,7 @@ $delete_category_form = new Job_Form_Category_Delete();
             <?php if($companies->count() > 0): ?>
                 <div class="feature-block-add">
                     <h3 class="title-editor no-border-radius title-feature-indent">
-                        <?php echo __('Add place'); ?>
+                        <?php echo __('Add a position'); ?>
                         <button type="button" class="feature-toggle-add toggle_design color-blue pull-right bt-header-right btn">
                             <i class="fa fa-plus"></i>
                         </button>
@@ -227,7 +227,7 @@ $delete_category_form = new Job_Form_Category_Delete();
 
                 <div class="feature-block-create">
                     <h3 class="title-editor no-border-radius title-feature-indent">
-                        <?php echo __('Create a new place'); ?>
+                        <?php echo __('Create a new position'); ?>
                     </h3>
                     <div class="container-fluid">
                         <?php echo $form_place; ?>
@@ -333,7 +333,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                             </button>
                         </h3>
                         <div class="container-fluid first-row-feature feature-manage-items">
-                            <table id="" class="table content-white-bkg">
+                            <table id="" class="table content-white-bkg sb-pager">
                                 <thead>
                                 <tr class="border-blue">
                                     <th style="width:26%;"><?php echo __("Name"); ?></th>
@@ -345,7 +345,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                                 </thead>
                                 <tbody>
                                 <?php foreach($categories as $category) : ?>
-                                    <tr id="category_manage_element_<?php echo $category->getId(); ?>" class="category-manage-element">
+                                    <tr id="category_manage_element_<?php echo $category->getId(); ?>" class="category-manage-element sb-pager">
                                         <td><?php echo cut($category->getName(), 22); ?></td>
                                         <td><?php echo cut($category->getDescription(), 30); ?></td>
                                         <td class="toggle-action">

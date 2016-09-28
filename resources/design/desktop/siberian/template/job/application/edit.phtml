@@ -17,6 +17,7 @@ $companies = $company->findAll(array(
 $form_company = new Job_Form_Company();
 $form_company->getElement("job_id")->setValue($job->getId());
 $form_company->setValueId($option_value->getId());
+$form_company->addNav("job-company-save-nav", "OK", false);
 
 $company_options = array();
 foreach($companies as $_company) {
@@ -39,6 +40,7 @@ if(!empty($company_options)) {
     $form_place->getElement("company_id")->addMultiOptions($company_options);
 }
 $form_place->setValueId($option_value->getId());
+$form_place->addNav("job-place-save-nav", "OK", false);
 
 if(!$job->getDisplayIncome()) {
     $form_place->removeIncome();
@@ -82,6 +84,9 @@ $form_category
     ->getElement("job_id")->setValue($job->getId())
 ;
 
+$form_category->addNav("job-category-save-nav", "OK", false);
+
+
 $form_category_toggle = new Job_Form_Category_Toggle();
 $delete_category_form = new Job_Form_Category_Delete();
 
@@ -100,7 +105,7 @@ $delete_category_form = new Job_Form_Category_Delete();
         </li>
         <?php if($companies->count() > 0): ?>
         <li role="presentation">
-            <a href="#places" aria-controls="places" role="tab" data-toggle="tab"><?php echo __("Places") ?></a>
+            <a href="#places" aria-controls="places" role="tab" data-toggle="tab"><?php echo __("Positions") ?></a>
         </li>
         <?php endif; ?>
         <li role="presentation">
@@ -137,7 +142,7 @@ $delete_category_form = new Job_Form_Category_Delete();
 
             <div class="feature-block-create">
                 <h3 class="title-editor no-border-radius title-feature-indent">
-                    <?php echo __('Create a new Company'); ?>
+                    <?php echo __('Create a new company'); ?>
                 </h3>
                 <div class="container-fluid">
                     <?php echo $form_company; ?>
@@ -171,7 +176,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                                 <?php foreach($companies as $company) : ?>
                                     <tr id="company_manage_element_<?php echo $company->getId(); ?>" class="company-manage-element sb-pager">
                                         <td><?php echo $company->getName(); ?></td>
-                                        <td><?php echo cut($company->getDescription(), 30); ?></td>
+                                        <td><?php echo cut(html_entity_decode($company->getDescription()), 60); ?></td>
                                         <td><?php echo $company->getEmail(); ?></td>
                                         <td class="toggle-action">
                                             <?php
@@ -215,7 +220,7 @@ $delete_category_form = new Job_Form_Category_Delete();
             <?php if($companies->count() > 0): ?>
                 <div class="feature-block-add">
                     <h3 class="title-editor no-border-radius title-feature-indent">
-                        <?php echo __('Add place'); ?>
+                        <?php echo __('Add a position'); ?>
                         <button type="button" class="feature-toggle-add toggle_design color-blue pull-right bt-header-right default_button">
                             <i class="icon icon-plus"></i>
                         </button>
@@ -224,7 +229,7 @@ $delete_category_form = new Job_Form_Category_Delete();
 
                 <div class="feature-block-create">
                     <h3 class="title-editor no-border-radius title-feature-indent">
-                        <?php echo __('Create a new Place'); ?>
+                        <?php echo __('Create a new position'); ?>
                     </h3>
                     <div class="container-fluid">
                         <?php echo $form_place; ?>
@@ -324,7 +329,7 @@ $delete_category_form = new Job_Form_Category_Delete();
                 <div class="feature-block-list">
                     <div class="margin-top">
                         <h3 class="title-editor no-border-radius title-feature-indent">
-                            <?php echo __('Manage Categories'); ?>
+                            <?php echo __('Manage'); ?>
                             <button type="button" class="toggle_design color-blue pull-right bt-header-right default_button feature-toggle-items">
                                 <i class="icon icon-chevron-down"></i>
                             </button>

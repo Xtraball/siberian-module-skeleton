@@ -32,7 +32,7 @@ $data = array(
 $option = Siberian_Feature::install($category, $data, array("code"));
 
 # Layouts
-$layout_data = array(1, 2);
+$layout_data = array(1);
 $slug = "job";
 
 Siberian_Feature::installLayouts($option->getId(), $slug, $layout_data);

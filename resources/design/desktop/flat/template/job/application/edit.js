@@ -19,8 +19,4 @@ $(document).ready(function() {
             $("table.sb-pager tr.edit-form[data-id]").hide()
         }
     });
-
-    if(location.hash.indexOf("#tab-") != -1) {
-        $("#"+location.hash.split("-")[1]).click();
-    }
 });

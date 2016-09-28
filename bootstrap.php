@@ -1,8 +1,7 @@
 <?php
 class Job_Bootstrap {
 
-  public static function init($bootstrap)
-  {
+  public static function init($bootstrap) {
     # Register assets
     Siberian_Assets::registerAssets("Job", "/app/local/modules/Job/resources/var/apps/");
     Siberian_Assets::addJavascripts(array(
