@@ -1,7 +1,7 @@
 {
   "name": "Job",
   "decription": "[SAMPLE] Job publication manager",
-  "version": "1.0",
+  "version": "1.1",
   "type": "module",
   "dependencies": {
     "system": {

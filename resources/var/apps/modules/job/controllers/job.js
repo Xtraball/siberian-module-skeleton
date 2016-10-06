@@ -51,7 +51,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         locality: null,
         position: null,
         keywords: null,
-        radius: 3,
+        radius: 4,
         distance: 0,
         categories: null,
         more_search: false
@@ -94,7 +94,7 @@ App.config(function($stateProvider, HomepageLayoutProvider) {
         $scope.filters.more_search = false;
         $scope.filters.position = false;
         $scope.filters.keywords = null;
-        $scope.filters.radius = 0;
+        $scope.filters.radius = 4;
         $scope.filters.distance = 0;
 
         $scope.closeFilterModal();

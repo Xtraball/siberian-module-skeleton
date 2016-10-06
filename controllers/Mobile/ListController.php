@@ -110,7 +110,7 @@ class Job_Mobile_ListController extends Application_Controller_Mobile_Default {
                             "title" => $place["name"],
                             "subtitle" => strip_tags($place["description"]),
                             "location" => $place["location"],
-                            "company_logo" => ($place["company_logo"]) ? $this->getRequest()->getBaseUrl()."/images/application".$place["company_logo"] : null,
+                            "icon" => ($place["icon"]) ? $this->getRequest()->getBaseUrl()."/images/application".$place["icon"] : $this->getRequest()->getBaseUrl()."/images/application".$place["company_logo"],
                             "company_name" => $place["company_name"],
                             "time" => $place["time"],
                             "distance" => $place["distance"],

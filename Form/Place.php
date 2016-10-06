@@ -21,7 +21,7 @@ class Job_Form_Place extends Siberian_Form_Abstract {
         $this->addSimpleHidden("place_id");
 
         $icon = $this->addSimpleImage("icon", __("Icon"), __("Import an icon image"), array("width" => 300, "height" => 300));
-        $banner = $this->addSimpleImage("banner", __("Header"), __("Import a header image"), array("width" => 1200, "height" => 400, "required" => true));
+        $banner = $this->addSimpleImage("banner", __("Header"), __("Import a header image"), array("width" => 1200, "height" => 400));
 
         $name = $this->addSimpleText("name", __("Name"));
         $name
@@ -35,17 +35,13 @@ class Job_Form_Place extends Siberian_Form_Abstract {
             ->setRichtext()
         ;
 
-        $email = $this->addSimpleText("email", __("E-mail"));
+        $email = $this->addSimpleText("email", __("Contact e-mail"));
         $email
             ->addValidator("EmailAddress")
-            ->setRequired(true)
             ->setAttrib("autocomplete", "job-place-email")
         ;
 
         $address = $this->addSimpleText("location", __("Address"));
-        $address
-            ->setRequired(true)
-        ;
 
         $company = $this->addSimpleSelect("company_id", __("Company"));
         $company->setRequired(true);

@@ -81,9 +81,14 @@ class Job_PlaceController extends Application_Controller_Default {
                 ))
             ;
 
+            if($values["banner"] == "_delete_") {
+                $place->setData("banner", "");
+            } else if(file_exists(Core_Model_Directory::getBasePathTo("images/application".$values["banner"]))) {
+                # Nothing changed, skip
+            } else {
             $path_banner = Siberian_Feature::moveUploadedFile($this->getCurrentOptionValue(), Core_Model_Directory::getTmpDirectory()."/".$values['banner'], $values['banner']);
             $place->setData("banner", $path_banner);
-
+            }
 
             if($values["icon"] == "_delete_") {
                 $place->setData("icon", "");
