@@ -1,6 +1,6 @@
 # Siberian module Skeleton, #JOB
 
-This module is given as-is, and is intended to be used a start - all-in-one base for creating rich modules.
+This module is given as-is, and is intended to be used as a start / all-in-one base for creating rich modules.
 
 ##  However this feature is incorporated in all Siberian Editions (From 4.6.2).
 
